@@ -1,0 +1,41 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode l3=new ListNode(0);
+		ListNode tempNode=l3;
+		int cn=0;
+		while(l1!=null||l2!=null){
+			int temp1=0;
+			int temp2=0;
+			if(l1!=null){
+				temp1=l1.val;
+				l1=l1.next;
+			}
+			if(l2!=null){
+				temp2=l2.val;
+				l2=l2.next;
+			}
+			int c=temp1+temp2+cn;
+			tempNode.next=new ListNode(c%10);
+			cn=c/10;
+			tempNode=tempNode.next;
+		}
+		if(cn==1){
+			tempNode.next=new ListNode(1);
+		}
+		return l3.next;
+    }
+}
+
+一开始，没有理解题目意思，是两个链表数字加起来，有进位下一位就+1这样的操作，后来搜了一下资料发现是这样
+
+然后就是循环对链表进行加法，开始想着要用List来统计所有数字，后来发现不需要，直接加，有进位就存着，下一次多加一个1
+
+最后就是忘记再加完以后判断一下是不是还有一个进位，导致没有提交成功，所以思考要仔细一点。
