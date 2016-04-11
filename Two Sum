@@ -1,0 +1,25 @@
+public class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        int index[]=new int[2];
+		Map<Integer,Integer> map=new HashMap<Integer, Integer>();
+        for(int i=0;i<nums.length;i++){
+        		if(!map.containsKey(nums[i])){
+        			map.put(nums[i], i);
+        		}
+        		int j=target-nums[i];
+        		if((map.containsKey(j))&&(map.get(j)!=i)){
+        			index[0]=map.get(j);
+        			index[1]=i;
+        		}
+        }
+        return index;
+    }
+}
+
+This is my finnal version.
+
+First time,I forget the index may be same,so i don't wirte   (map.get(j)!=i)
+
+Then I change it to j!=nums[i],it's wrong again.because this is about the nums to be the same.
+
+Finally i change it to this and it worked.
