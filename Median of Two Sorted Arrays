@@ -1,0 +1,42 @@
+public class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int total = nums1.length + nums2.length;
+		if (total%2==1)
+			return findKth(nums1, nums1.length, nums2, nums2.length, total / 2 + 1);
+		else
+			return (findKth(nums1, nums1.length, nums2, nums2.length, total / 2)
+					+ findKth(nums1, nums1.length, nums2, nums2.length, total / 2 + 1)) / 2;
+    }
+    double findKth(int a[], int m, int b[], int n, int k)
+	{
+		//always assume that m is equal or smaller than n
+		if (m > n)
+			return findKth(b, n, a, m, k);
+		if (m == 0)
+			return b[k - 1];
+		if (k == 1)
+			return Math.min(a[0], b[0]);
+		//divide k into two parts
+		int pa = Math.min(k / 2, m), pb = k - pa;
+		if (a[pa - 1] < b[pb - 1])
+			return findKth(setInt(a, pa, a.length), m - pa, b, n, k - pa);
+		else if (a[pa - 1] > b[pb - 1])
+			return findKth(a, m, setInt(b, pb, b.length), n - pb, k - pb);
+		else
+			return a[pa - 1];
+	}
+	
+	int[] setInt(int[] a,int begin,int end){
+		int[] c=new int[end-begin];
+		for(int i=begin;i<end;i++){
+			c[i-begin]=a[i];
+		}
+		return c;
+	}
+}
+
+因为之前算法课有做过这道题，所以开始有些随意，后来发现题目表达的意思跟我想的不一样，并不是只找出中位数（如果有两个，还要取平均值）
+
+所以开始就要判断两个数组长度加起来是奇数还是偶数，如果是奇数的话，那就能找到一个中位数，不需要求平均，如果为偶数，则需要取两个数求平均
+
+然后对每个数组，先取其中位数，然后跟另一个数组的中位数比较，判断取出哪半部分，依次比较直到取出一个值结束。是一个迭代过程。
