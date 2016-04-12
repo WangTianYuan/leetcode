@@ -1,0 +1,40 @@
+public class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        Map<Character, Integer> map = new HashMap<Character, Integer>();
+        int begin=0;
+        int end=0;
+        int length=0;
+        int temp=0;
+        int j=0;
+        List<Character> list=new ArrayList<Character>();
+        
+        for(int i=0;i<s.length();i++){
+        	char c=s.charAt(i);
+        	if(!map.containsKey(c)){
+        		map.put(c, i);
+        		end=i+1;
+        		list.add(c);
+        	}else{
+        		int r=map.get(c);
+        		temp=end-begin;
+        		begin=r+1;
+        		end=i;
+        		for(;j<begin;j++){
+        			map.remove(list.get(j));
+//        			list.remove(j);
+        		}
+        		map.put(c, i);
+        		list.add(c);
+        		length=Math.max(temp, length);
+        	}
+        }
+        length=Math.max(end-begin, length);
+        return length;
+    }
+}
+
+开始考虑把出现过的字母都放到map里，然后根据顺序存在list里面，后面出现相同字母的话，从map中读出在哪里，然后用begin标记新开始的字符串
+
+中间错误的加了一个list.remove(j)，因为以为删除的字母也要在list中除去，后来发现list中除去以后再加上其他的字母会导致顺序有问题，删除这一行就没问题了。
+
+最后就是end和begin的距离，开始直接end表示最后一个字母，begin是最开始的，end-begin会比长度少1，所以end获取时+1
