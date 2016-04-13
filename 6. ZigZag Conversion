@@ -1,0 +1,33 @@
+public class Solution {
+    public String convert(String s, int numRows) {
+    if(s.equals("")){
+		return "";
+	}
+	if(s.length()<numRows||numRows==1){
+		return s;
+	}
+    List<String> lists=new ArrayList<String>();
+    int i=0;
+    String str="";
+    for(;i<numRows;i++){
+    	lists.add(""+s.charAt(i));
+    }
+    int j=i-1;
+    for(;i<s.length();i++){
+    	if((i-1)%(2*numRows-2)>=(numRows-1)){
+    		j--;
+    	}else{
+    		j++;
+    	}
+    	lists.set(j, lists.get(j)+s.charAt(i));
+    }
+    for (String string : lists) {
+		str+=string;
+	}
+    return str;
+    }
+}
+
+这一题比较简单但是有几个比较极端的特例需要考虑：空字符串，字符串长度小于行数以及行数为1的情况。
+
+还有就是在计算什么位置需要哪个list加字符时需要计算好，不然很容易弄混
