@@ -1,0 +1,51 @@
+public class Solution {
+    public String longestPalindrome(String s) {
+        int mx=0,ans=0,po=0;//mx即为当前计算回文串最右边字符的最大值
+	     int center=0;
+	     int[] Len=new int[2*s.length()+4];
+	     char str[]=INIT(s);
+	     
+	     for(int i=1;i<=2*s.length();i++)  
+	     {  
+	         if(mx>i)  
+	         Len[i]=Math.min(mx-i,Len[2*po-i]);//在Len[j]和mx-i中取个小  
+	         else  
+	         Len[i]=1;//如果i>=mx，要从头开始匹配  
+	         while(str[i-Len[i]]==str[i+Len[i]])  
+	         Len[i]++;  
+	         if(Len[i]+i>mx)//若新计算的回文串右端点位置大于mx，要更新po和mx的值  
+	         {  
+	             mx=Len[i]+i;  
+	             po=i;  
+	         } 
+	         if(Len[i]>=ans){
+	        	 ans=Len[i];
+	         	center=i;
+	         }
+	     }
+	     return s.substring((center-ans)/2, (center+ans)/2-1);//返回Len[i]中的最大值-1即为原串的最长回文子串额长度   
+    }
+    //转换原始串  
+	char[] INIT(String s)  
+	{  
+	    char str[]=new char[2*s.length()+4];
+	    str[0]='@';//字符串开头增加一个特殊字符，防止越界  
+	    for(int i=1;i<=2*s.length();i+=2)  
+	    {  
+	        str[i]='#';  
+	        str[i+1]=s.charAt(i/2);  
+	    }  
+	    str[2*s.length()+1]='#';  
+	    str[2*s.length()+2]='$';//字符串结尾加一个字符，防止越界  
+	    str[2*s.length()+3]=0;  
+	    return str;//返回转换字符串的长度  
+	}  
+}
+
+开始以为跟第三题有点像，后来发现不一样，如果找出每个子串然后判断是否为回文的话很简单但是复杂度太高了。
+
+枚举字符串中心也可以，然后根据奇偶来判断也可以，最好的优化方式就是每个字符只判断一次，这样就做到了线性复杂度。
+
+思路是在原有字符串基础上间隔插入'#'，这样之前是回文的之后也是回文，而且现在只有奇数这一种情况。这样就很容易判断了。
+
+具体分析见blog:http://blog.csdn.net/dyx404514/article/details/42061017
