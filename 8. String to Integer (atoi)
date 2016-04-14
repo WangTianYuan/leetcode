@@ -1,0 +1,49 @@
+public class Solution {
+    public int myAtoi(String str) {
+        long x=0;
+        int i=0;
+        int sign=1;
+        
+        if (str == null||str.equals(""))   //空字串  
+            return 0;
+        
+        while(str.charAt(i)!='\0' && str.charAt(i)==' '){
+        	i++;
+        }
+        
+        if(str.charAt(i)=='+'){
+        	sign=1;
+        	i++;
+        }else if(str.charAt(i)=='-'){
+        	sign=-1;
+        	i++;
+        }else if(str.charAt(i)=='\0'){
+        	return 0;
+        }
+        
+        for(;i<str.length();i++){
+        	if(str.charAt(i)>= '0'&&str.charAt(i)<= '9'){
+        		x=x*10+sign*(str.charAt(i)-'0');
+        	}else{
+        		return (int) x;
+        	}
+        	if(x>=Integer.MAX_VALUE||x<=Integer.MIN_VALUE){
+        		if(sign==1){
+        			return Integer.MAX_VALUE;
+        		}else{
+        			return Integer.MIN_VALUE;
+        		}
+        	}
+        }
+        return (int) x;
+    }
+}
+
+一开始没明白题目的意思，所以查了一下资料：
+1. 字串为空或者全是空格，返回0； 
+2. 字串的前缀空格需要忽略掉；
+3. 忽略掉前缀空格后，遇到的第一个字符，如果是‘+’或‘－’号，继续往后读；如果是数字，则开始处理数字；如果不是前面的2种，返回0；
+4. 处理数字的过程中，如果之后的字符非数字，就停止转换，返回当前值；
+5. 在上述处理过程中，如果转换出的值超出了int型的范围，就返回int的最大值或最小值。
+
+主要就是考虑一些特例，当然中间出了一个问题就是想着用int接收。结果发现会自动取余，所以最后改成long接收。强制转换成int。
