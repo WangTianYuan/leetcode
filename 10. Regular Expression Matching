@@ -1,0 +1,92 @@
+public class Solution {
+    public boolean isMatch(String s, String p) {
+        if (p.length() == 0)
+			return s.length() == 0;
+		// length == 1 is the case that is easy to forget.
+		// as p is subtracted 2 each time, so if original
+		// p is odd, then finally it will face the length 1
+		if (p.length() == 1)
+			return (s.length() == 1)
+					&& (p.charAt(0) == s.charAt(0) || p.charAt(0) == '.');
+
+		// next char is not '*': must match current character
+		if (p.charAt(1) != '*') {
+			if (s.length() == 0)
+				return false;
+			else
+				return (s.charAt(0) == p.charAt(0) || p.charAt(0) == '.')
+						&& isMatch(s.substring(1), p.substring(1));
+		} else {
+			// next char is *
+			while (s.length() > 0
+					&& (p.charAt(0) == s.charAt(0) || p.charAt(0) == '.')) {
+				if (isMatch(s, p.substring(2)))
+					return true;
+				s = s.substring(1);
+			}
+			return isMatch(s, p.substring(2));
+		}
+    }
+}
+
+这一题跟开始想的不一样，开始以为是包含关系，后来发现需要匹配，然后采用递归关系，需要2个字符2个字符的判断，
+
+所以前面每次都是依据后面的结果来判断，自己做的时候多考虑一下怎么递归来做到，这种方式运行时间较长
+
+下面给出一种3ms的java实现：（也是使用的递归方式，想一想有什么地方改进了导致时间这么短）
+
+public class Solution {
+
+    char[] s, p;
+    int sLength, pLength, noWildcard;
+    Boolean[][] dp;
+
+    public boolean isMatch(String ss, String ps) {
+
+        s = ss.toCharArray();
+        p = ps.toCharArray();
+        sLength = s.length;
+        pLength = p.length;
+        noWildcard = pLength - 1;
+        dp = new Boolean[pLength + 1][sLength + 1];
+        return isMatch(0, 0);
+    }
+
+    boolean isMatch(int pi, int si){
+        if(dp[pi][si] != null) return dp[pi][si];
+        while(true){
+
+            if(pi < noWildcard && p[pi+1] == '*'){
+                char c = p[pi];
+                pi += 2;
+
+                while(true){
+
+                    boolean isMatch = isMatch(pi, si);
+                    dp[pi][si] = isMatch;
+
+                    if(isMatch){
+                        return true;
+                    }
+
+                    if(si == sLength) return pi == pLength;
+
+                    if(c != '.' && c != s[si]){
+                        return false;
+                    }
+
+                    si++;
+                }
+            }
+
+            if(pi == pLength || si == sLength) return pi == pLength && si == sLength;
+
+            if(p[pi] != '.' && p[pi] != s[si]){
+                return false;
+            }
+
+            pi++;
+            si++;
+        }
+    }
+}
