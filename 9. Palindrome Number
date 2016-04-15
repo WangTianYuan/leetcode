@@ -1,0 +1,46 @@
+public class Solution {
+    public boolean isPalindrome(int x) {
+        if(x<0){
+        	return false;
+        }
+        
+        List<Integer> list=new ArrayList<Integer>();
+        while(x/10>0){
+        	list.add(x%10);
+        	x=x/10;
+        }
+        list.add(x);
+        for(int i=0;i<=(list.size()-1)/2;i++){
+        	if(list.get(i)==list.get(list.size()-i-1)){
+        	}else{
+        		return false;
+        	}
+        }
+        return true;
+    }
+}
+
+这题开始没看下面注释，把负数也算上了，然后就会出现溢出的情况，结果提交不成功
+后来看到注释，发现很简单，就取每位上的数字，然后用list读取判断就好了。
+不过提交时间有点长，因为需要遍历x然后再遍历list
+
+下面是一个9ms实现的：
+public class Solution {
+    static int v;
+    public static boolean isPalindrome(int x) {
+        //optimizations
+        if(x<0) return false;
+        if(x<10) return true;
+
+        //actual logic
+        v=x%10;
+        x=x/10;
+        while(x-v>0)
+        {
+                v=v*10+x%10;
+                x/=10;
+        }
+        if(v>x){v/=10;}
+        return v==x?true:false;
+    }
+}
