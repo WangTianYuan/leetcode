@@ -1,0 +1,67 @@
+public class Solution {
+    public String intToRoman(int num) {
+        String c[][]={
+            {"","I","II","III","IV","V","VI","VII","VIII","IX"},
+            {"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC"},
+            {"","C","CC","CCC","CD","D","DC","DCC","DCCC","CM"},
+            {"","M","MM","MMM"}
+        };
+        StringBuffer roman = new StringBuffer();
+        roman.append(c[3][num / 1000 % 10]);
+        roman.append(c[2][num / 100 % 10]);
+        roman.append(c[1][num / 10 % 10]);
+        roman.append(c[0][num % 10]);
+         
+        return roman.toString();
+    }
+}
+
+因为样例只需要到3999，所以上面的方式很简单，M表示1000，C表示100，X表示10，所以1-9，10-90，100-900，1000-3000都可以表示出来
+
+然后相加就可以当成放在后面就行了。所以上面的方式很好懂，但是运行比较耗时。
+
+下面是一种6ms运行的:希望以后复习的时候除了做出来答案也要做出最好的答案，同时知道为什么，第一次做经常看答案。。。
+public class Solution {
+
+private static int index = 0;
+private static char[] result = new char[15];
+
+public static String intToRoman(int num) {
+    index = 0;
+    if (num > 999) {
+        if (num > 2999) {
+            result[index++] = 'M';
+            result[index++] = 'M';
+        } else if (num > 1999) 
+            result[index++] = 'M';
+        result[index++] = 'M';
+        num = num % 1000;
+    }
+    if (num > 99) {
+        ten(result, num / 100, 'M', 'D', 'C');
+        num = num % 100;
+    }
+    if (num > 9) {
+        ten(result, num / 10, 'C', 'L', 'X');
+        num = num % 10;
+    }
+    ten(result, num, 'X', 'V', 'I');
+    return new String(result, 0, index);
+}
+
+public static char[] ten(char[] result, int val, char f1, char f2, char f3) {
+    if (val > 8) {
+        result[index++] = f3;
+        result[index++] = f1;
+    } else if (val > 5) {
+        result[index++] = f2;
+        while (val-- > 5) result[index++] = f3;
+    } else if (val > 4) {
+        result[index++] = f2;
+    } else if (val == 4) {
+        result[index++] = f3;
+        result[index++] = f2;
+    } else while (val-- > 0) result[index++] = f3;
+    return result;
+}
+}
