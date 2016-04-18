@@ -1,0 +1,50 @@
+public class Solution {
+    public int maxArea(int[] height) {
+        int res=0;  
+        int n = height.length; 
+        int l=0,r=n-1;  
+        while(l<r)  
+        {  
+            res=Math.max(res,Math.min(height[l],height[r])*(r-l));  
+            if (height[l]<height[r])  
+            {  
+                int k=l;  
+                while(k<r&&height[k]<=height[l])  
+                    k++;  
+                l=k;  
+                }  
+            else  
+            {  
+                int k=r;  
+                while(k>l&&height[k]<=height[r])  
+                    k--;  
+                r=k;  
+             }  
+        }  
+        return res;  
+    }
+}
+
+开始的考虑的太复杂了，其实很简单，就是算数组长度和两端的最小值的乘积，然后比较那个容量最大。
+
+在 j 的右端没有一条线会比它高！同理，在i的左边也不会有比它高的线；
+
+还有一个运行时间更短的：
+public class Solution {
+    public int maxArea(int[] height) {
+        int left = 0;
+    int right = height.length-1;
+    int max = 0,temp = 0;
+    while(left<right) {
+        if(height[left] > height[right]){
+            temp = (right-left) * height[right];
+            right--;
+        }else{
+            temp = (right-left) * height[left];
+            left++;
+        }
+        max = max > temp ? max :temp;
+    }
+    return max;
+     }
+}
