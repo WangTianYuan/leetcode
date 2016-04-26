@@ -1,0 +1,98 @@
+public class Solution {
+    public int romanToInt(String s) {
+        int count=0;
+	int i=0;
+	
+	while(i<s.length()&&s.charAt(i)=='M'){
+		count+=1000;
+		i++;
+	}
+	int j=i;
+    for(;i<s.length();i++){
+    	if(s.charAt(i)=='C'){
+    		count+=100;
+    	}else if(s.charAt(i)=='D'){
+    		if(j==i){
+    			count+=500;
+    		}else{
+    			count+=300;
+    		}
+    	}else  if(s.charAt(i)=='M'){
+    		count+=800;
+    	}else{
+    		break;
+    	}
+    }
+    j=i;
+    for(;i<s.length();i++){
+    	if(s.charAt(i)=='X'){
+    		count+=10;
+    	}else if(s.charAt(i)=='L'){
+    		if(j==i){
+    			count+=50;
+    		}else{
+    			count+=30;
+    		}
+    	}else  if(s.charAt(i)=='C'){
+    		count+=80;
+    	}else{
+    		break;
+    	}
+    }
+    j=i;
+    for(;i<s.length();i++){
+    	if(s.charAt(i)=='I'){
+    		count+=1;
+    	}else if(s.charAt(i)=='V'){
+    		if(j==i){
+    			count+=5;
+    		}else{
+    			count+=3;
+    		}
+    	}else  if(s.charAt(i)=='X'){
+    		count+=8;
+    	}else{
+    		break;
+    	}
+    }
+    return count;
+    }
+}
+
+根据12题反推，其中有一个遗漏的地方，就是while循环时忘记越界问题，运行时间9ms，适中
+
+下面是运行最快的方法：
+public class Solution {
+    private static final int[] vals;
+
+    static {
+        vals = new int[256];
+        vals['I'] = 1;
+        vals['V'] = 5;
+        vals['X'] = 10;
+        vals['L'] = 50;
+        vals['C'] = 100;
+        vals['D'] = 500;
+        vals['M'] = 1000;
+    }
+
+    public int romanToInt(String s) {
+        char[] r = s.toCharArray();
+        int previousVal = Integer.MAX_VALUE;
+        int result = 0;
+        int carry = 0;
+        for (char c : r) {
+            int val = vals[c];
+            if (previousVal > val) {
+                result += carry;
+                carry = val;
+            } else if (previousVal == val) {
+                carry += val;
+            } else {
+                carry = -carry + val;
+            }
+            previousVal = val;
+        }
+        return result + carry;
+    }
+}
