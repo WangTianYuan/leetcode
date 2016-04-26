@@ -1,0 +1,66 @@
+public class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        if (strs.length == 0)
+			return "";
+		if (strs.length == 1)
+			return strs[0];
+		String str = strs[0];
+		for (int i = 1; i < strs.length; i++) {
+			if (strs[i].equals(""))
+				return "";
+			if (strs[i].length() >= str.length()) {
+				String temp = strs[i].substring(0, str.length());
+				while (!str.equals(temp)) {
+					if (str.equals(""))
+						return "";
+					str = str.substring(0, str.length() - 1);
+					temp = temp.substring(0, temp.length() - 1);
+				}
+			} else {
+				String temp = strs[i];
+				str = str.substring(0, temp.length());
+				while (!str.equals(temp)) {
+					if (str.equals(""))
+						return "";
+					str = str.substring(0, str.length() - 1);
+					temp = temp.substring(0, temp.length() - 1);
+				}
+			}
+		}
+		return str;
+    }
+}
+
+自己做的第一次速度最快，可能因为大家都是1ms吧。。。不过还是遇到了一些遗漏
+
+首先不能一直substring,要判断当长度为0时，返回""，然后就是数组长度为0时，返回""，数组长度为1时，返回strs[0]等等。
+
+别人的思路：
+public class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        if (strs.length < 1 || strs == null) {
+            return "";
+        }
+        if (strs.length == 1) {
+            return strs[0];
+        }
+        //find the shortest String
+        int shortest = 0;
+        int len = strs[0].length();
+        for (int i = 1; i < strs.length; i++) {
+            int curLen = strs[i].length();
+            if (curLen < len) {
+                len = curLen;
+                shortest = i;
+            }
+        }
+        //find the longest common prefix
+        String sub = strs[shortest];
+        for (int i = 0; i < strs.length; i++) {
+            while (strs[i].indexOf(sub) != 0) {
+                sub = sub.substring(0, sub.length()-1);
+            }
+        } 
+        return sub;
+    }
+}
