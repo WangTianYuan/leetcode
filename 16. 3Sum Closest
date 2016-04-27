@@ -1,0 +1,95 @@
+public class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        int n=nums.length;
+		int dis=Integer.MAX_VALUE;
+		if(n<3)
+			return 0;
+		
+		Arrays.sort(nums);
+		
+		int i=0;
+		
+		while(i<n-2){
+			int start=i+1,end=n-1;
+			while(start<end){
+				int sum=nums[i]+nums[start]+nums[end];
+				if(sum>target){
+					if(Math.abs(target-sum)<Math.abs(dis)){
+						dis=target-sum;
+					}
+					do{
+						end--;
+					}while(start<end&&nums[end]==nums[end+1]);
+				}else if(sum<target){
+					if(Math.abs(target-sum)<Math.abs(dis)){
+						dis=target-sum;
+					}
+					do{
+						start++;;
+					}while(start<end&&nums[start]==nums[start-1]);
+				}else{
+					dis=0;
+					return target;
+				}
+			}
+			do{
+				i++;;
+			}while(i<n-2&&nums[i]==nums[i-1]);
+		}
+		return target-dis;
+    }
+}
+
+根据15题的思路做的，只是把0改成target然后用一个int表示间隔，运行时间不是很快。
+
+下面是运行最快的：
+public class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        if(nums.length<3) return 0;
+        Arrays.sort(nums);
+        int min = Integer.MAX_VALUE;int result =Integer.MAX_VALUE;
+        for(int i=0;i<nums.length-2;i++)
+        {
+            if(3*nums[i]>target) 
+            {
+                int sum3 = nums[i]+nums[i+1]+nums[i+2];
+                if(Math.abs(sum3-target)<min)  return sum3;
+            }
+            int left = i+1; 
+            int right = nums.length-1;
+            int sum = target - nums[i];
+            if(2*nums[right]<sum) {
+                int sum2 = nums[i]+nums[i+1]+nums[i+2];
+                 if(Math.abs(sum2-target)<min){
+                     min = Math.abs(target-sum2);
+                     result = sum2;
+                 }
+               continue;
+            }
+            while(left<right)
+            {
+                int temp = nums[i] + nums[left]+nums[right];
+                if(temp==target) return target;
+                if(2*nums[left]>sum) 
+                {
+                    int sumsum = nums[i]+nums[left]+nums[left+1];
+                    if(Math.abs(sumsum-target)<min){
+                        min = Math.abs(target-sumsum);
+                        result = sumsum;
+                     }
+                    break;
+                }
+               else if(Math.abs(target-temp)<min)
+                {
+                    min = Math.abs(target-temp);
+                    result = temp;
+                }
+                if(temp<target) 
+                   left++;
+                else right --;
+
+            }
+        }
+        return result;
+    }
+}
