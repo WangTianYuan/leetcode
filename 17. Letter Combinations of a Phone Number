@@ -1,0 +1,34 @@
+public class Solution {
+    public List<String> letterCombinations(String digits){
+	List<String> sList=new ArrayList<String>();
+	if(digits.length()==0)
+		return sList;
+	String[] map=new String[10];
+	map[0]="";
+	map[1]="";
+	map[2]="abc";
+	map[3]="def";
+	map[4]="ghi";
+	map[5]="jkl";
+	map[6]="mno";
+	map[7]="pqrs";
+	map[8]="tuv";
+	map[9]="wxyz";	
+	
+	char[] temp=new char[digits.length()];
+	findLetter(digits, 0, temp, sList, map);
+	return sList;
+}
+public void findLetter(String digits,int index,char[] temp,List<String> sList,String[] map){
+	if(index==digits.length()){
+		sList.add(new String(temp));
+		return ;
+	}
+	for(int i=0;i<map[digits.charAt(index)-'0'].length();i++){
+		temp[index]=map[digits.charAt(index)-'0'].charAt(i);
+		findLetter(digits, index+1, temp, sList, map);
+	}
+}
+}
+
+开始没想到递归的思路，所以有点陷入死循环了，这个地方需要好好思考一下。可能因为数据量不大，所以运行时间比较快
