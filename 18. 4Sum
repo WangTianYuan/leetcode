@@ -1,0 +1,233 @@
+public class Solution {
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+
+		int n = nums.length;
+		if (n < 4)
+			return result;
+
+		Arrays.sort(nums);
+
+		int i = 0, j = 0;
+
+		while (i < n - 3) {
+			j = i + 1;
+			while (j < n - 2) {
+				int start = j + 1, end = n - 1;
+				while (start < end) {
+					int sum = nums[i] + nums[j] + nums[start] + nums[end];
+					if (sum == target) {
+						if(!result.contains(Arrays.asList(nums[i], nums[j], nums[start],
+								nums[end]))){
+						result.add(Arrays.asList(nums[i], nums[j], nums[start],
+								nums[end]));
+						}
+						do {
+							end--;
+						} while (end > start && nums[end] == nums[end + 1]);
+						do {
+							start++;
+						} while (start < end && nums[start] == nums[start - 1]);
+					} else if (sum > target) {
+						do {
+							end--;
+						} while (end > start && nums[end] == nums[end + 1]);
+					} else {
+						do {
+							start++;
+						} while (start < end && nums[start] == nums[start - 1]);
+					}
+				}
+				do {
+					j++;
+				} while (j < n - 3 && nums[j] == nums[j - 1]);
+			}
+			do {
+				i++;
+			} while (i < n - 2 && nums[i] == nums[i - 1]);
+		}
+
+		return result;
+    }
+}
+
+按照前面3Sum的思路来做，先取1.2两个，然后再设置start和end
+
+有一个区别的地方就是4个相加的话要判断一下是不是重复，所以需要list.contain函数，但是这样运行比较慢。
+
+下面是速度最快的算法思路：排除很多不可能，然后将4Sum->3Sum->2Sum
+public List<List<Integer>> fourSum(int[] nums, int target) {
+        ArrayList<List<Integer>> res = new ArrayList<List<Integer>>();
+        int len = nums.length;
+        if (nums == null || len < 4)
+            return res;
+
+        Arrays.sort(nums);
+
+        int max = nums[len - 1];
+        if (4 * nums[0] > target || 4 * max < target)
+            return res;
+
+        int i, z;
+        for (i = 0; i < len; i++) {
+            z = nums[i];
+            if (i > 0 && z == nums[i - 1])// avoid duplicate
+                continue;
+            if (z + 3 * max < target) // z is too small
+                continue;
+            if (4 * z > target) // z is too large
+                break;
+            if (4 * z == target) { // z is the boundary
+                if (i + 3 < len && nums[i + 3] == z)
+                    res.add(Arrays.asList(z, z, z, z));
+                break;
+            }
+
+            threeSumForFourSum(nums, target - z, i + 1, len - 1, res, z);
+        }
+
+        return res;
+    }
+
+    /*
+     * Find all possible distinguished three numbers adding up to the target
+     * in sorted array nums[] between indices low and high. If there are,
+     * add all of them into the ArrayList fourSumList, using
+     * fourSumList.add(Arrays.asList(z1, the three numbers))
+     */
+    public void threeSumForFourSum(int[] nums, int target, int low, int high, ArrayList<List<Integer>> fourSumList,
+            int z1) {
+        if (low + 1 >= high)
+            return;
+
+        int max = nums[high];
+        if (3 * nums[low] > target || 3 * max < target)
+            return;
+
+        int i, z;
+        for (i = low; i < high - 1; i++) {
+            z = nums[i];
+            if (i > low && z == nums[i - 1]) // avoid duplicate
+                continue;
+            if (z + 2 * max < target) // z is too small
+                continue;
+
+            if (3 * z > target) // z is too large
+                break;
+
+            if (3 * z == target) { // z is the boundary
+                if (i + 1 < high && nums[i + 2] == z)
+                    fourSumList.add(Arrays.asList(z1, z, z, z));
+                break;
+            }
+
+            twoSumForFourSum(nums, target - z, i + 1, high, fourSumList, z1, z);
+        }
+
+    }
+
+    /*
+     * Find all possible distinguished two numbers adding up to the target
+     * in sorted array nums[] between indices low and high. If there are,
+     * add all of them into the ArrayList fourSumList, using
+     * fourSumList.add(Arrays.asList(z1, z2, the two numbers))
+     */
+    public void twoSumForFourSum(int[] nums, int target, int low, int high, ArrayList<List<Integer>> fourSumList,
+            int z1, int z2) {
+
+        if (low >= high)
+            return;
+
+        if (2 * nums[low] > target || 2 * nums[high] < target)
+            return;
+
+        int i = low, j = high, sum, x;
+        while (i < j) {
+            sum = nums[i] + nums[j];
+            if (sum == target) {
+                fourSumList.add(Arrays.asList(z1, z2, nums[i], nums[j]));
+
+                x = nums[i];
+                while (++i < j && x == nums[i]) // avoid duplicate
+                    ;
+                x = nums[j];
+                while (i < --j && x == nums[j]) // avoid duplicate
+                    ;
+            }
+            if (sum < target)
+                i++;
+            if (sum > target)
+                j--;
+        }
+        return;
+    }
+    
+    然后提供一个解决所有Sum的函数方式：
+    public class Solution {
+
+    // assume input array is sorted (can contain duplicates!)
+    public List<List<Integer>> nSum(int[] nums, int startIdx, int n, int target) {
+        ArrayList<List<Integer>> l = new ArrayList<List<Integer>>();
+
+        if(n <= 0 || startIdx >= nums.length || startIdx+n > nums.length)
+            return l;
+
+        // Note: this is important, early prune the cases where the sum of first n > target
+        int sum = 0;
+        for(int i=0; i<n; i++)
+            sum += nums[startIdx+i];
+        if (sum>target)
+            return l;
+
+        // Note: this is important, early prune the cases where the sum of last n < target
+        sum = 0;
+        for(int i=nums.length-1; i>=nums.length-n; i--)
+            sum += nums[i];
+        if (sum<target)
+            return l;
+
+        if(n==1) {
+            for(int i=startIdx; i<nums.length; i++) {
+                if(nums[i]==target) {
+                    ArrayList<Integer> subL = new ArrayList<Integer>();
+                    subL.add(nums[i]);
+                    l.add(subL);
+                    break;
+                }
+            }
+        } else {
+            int startVal = nums[startIdx];
+            int startCount = 1;
+            for(int i=startIdx+1; i<nums.length; i++) {
+                if(nums[i]==startVal)
+                    startCount++;
+                else
+                    break;
+            }
+            for(int i=0; i<=startCount; i++) {
+                List<List<Integer>> ls = nSum(nums,startIdx+startCount,n-i,target-i*startVal);
+                for(List<Integer> postLs : ls) { // merge the lists
+                    ArrayList<Integer> prefixLs = new ArrayList<Integer>();
+                    for(int j=1; j<=i; j++) // add duplicates startVals first
+                        prefixLs.add(startVal);
+                    prefixLs.addAll(postLs);
+                    l.add(prefixLs);
+                }
+            }
+            // Note: this is tricky, this handles the case the current target can consists of all duplicates values!
+            if(startCount>=n && target-n*startVal==0) {
+                System.out.println("Triggered " + startVal);
+                ArrayList<Integer> prefixLs = new ArrayList<Integer>();
+                for(int j=1; j<=n; j++)
+                    prefixLs.add(startVal);
+                l.add(prefixLs);
+            }
+        }
+        return l;
+    }
+
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        Arrays.sort(nums);
+        return nSum(nums, 0, 4, target);
+    }
+}
