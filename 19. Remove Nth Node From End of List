@@ -1,0 +1,57 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        List<ListNode> nList = new ArrayList<ListNode>();
+		ListNode temp = new ListNode(0);
+		temp.next = head;
+		nList.add(temp);
+		int i = 1;
+		while (head.next != null) {
+			i++;
+			nList.add(head);
+			head = head.next;
+		}
+		nList.add(head);
+		ListNode tmp = nList.get(i - n);
+		if (i - n + 2 < nList.size()) {
+			tmp.next = nList.get(i - n + 2);
+		} else {
+			tmp.next = null;
+		}
+		return temp.next;
+    }
+}
+
+因为想着一次就确定完，所以把每一次读出来的都存到list里面，然后根据n读出要删去的那个node
+
+然后判断是否出界，不出界就返回。
+
+有一个比较好的思路就是用2个ListNode，一个先跑n步，然后一起跑，跑到开始的那个结束，晚跑得那个刚好到位置，直接去掉就行。
+
+public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode start = new ListNode(0);
+    ListNode slow = start, fast = start;
+    slow.next = head;
+
+    //Move fast in front so that the gap between slow and fast becomes n
+    for(int i=1; i<=n+1; i++)   {
+        fast = fast.next;
+    }
+    //Move fast to the end, maintaining the gap
+    while(fast != null) {
+        slow = slow.next;
+        fast = fast.next;
+    }
+    //Skip the desired node
+    slow.next = slow.next.next;
+    return start.next;
+    }
+    
+    有人能达到0ms，再做的时候试一试。
