@@ -1,0 +1,47 @@
+public class Solution {
+    public List<String> generateParenthesis(int n) {
+    if(n<=0)	return null;
+    ArrayList<String>	list = new ArrayList<String>();
+    String str = new String();
+    dfs(list,str,n,n);
+    return list;
+  }
+  
+  private void	dfs(ArrayList<String> list, String str, int left, int right){
+    if(left>right)	return;//problem with ")("
+    if(left==0&&right==0){
+      list.add(str);
+    }
+    if(left>0)	dfs(list,str+"(",left-1,right);
+    if(right>0)	dfs(list, str+")",left,right-1);
+  }
+}
+
+思路很简单，仔细看看，因为当时自己没想出来。
+
+http://blog.csdn.net/yutianzuijin/article/details/13161721这个网址有详细介绍。
+
+这是运行最快的：
+
+public class Solution {
+    private void f(List<String> result, char[] characters, int size,
+                   int leftNum, int rightNum) {
+        if (leftNum == 0 && rightNum == 0) {
+            result.add(String.copyValueOf(characters));
+        }
+        if (leftNum > 0 && rightNum > 0) {
+            characters[size] = '(';
+            f(result, characters, size + 1, leftNum - 1, rightNum);
+        }
+        if (rightNum > 0 && rightNum > leftNum) {
+            characters[size] = ')';
+            f(result, characters, size + 1, leftNum, rightNum - 1);
+        }
+    }
+    public List<String> generateParenthesis(int n) {
+        char[] chars = new char[n * 2];
+        List<String> result = new ArrayList<>();
+        f(result, chars, 0, n, n);
+        return result;
+    }
+}
