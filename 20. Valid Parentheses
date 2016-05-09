@@ -1,0 +1,72 @@
+public class Solution {
+    private static final int[] v;
+	static{
+    v=new int[256];
+    v['(']=-1;
+    v[')']=1;
+    v['{']=-2;
+    v['}']=2;
+    v['[']=-3;
+    v[']']=3;
+	}
+	
+    public boolean isValid(String s) {
+        List<Integer> list = new ArrayList<Integer>();
+		int j = 0;
+
+		for (int i = 0; i < s.length(); i++) {
+			if (list.size() == 0) {
+				if (v[s.charAt(i)] < 0) {
+					list.add(v[s.charAt(i)]);
+					j = 0;
+				} else {
+					return false;
+				}
+			} else {
+				if (list.get(j) + v[s.charAt(i)] == 0) {
+					list.remove(j);
+					j--;
+				} else if (list.get(j) * v[s.charAt(i)] > 0) {
+					list.add(v[s.charAt(i)]);
+					j++;
+				} else {
+					return false;
+				}
+			}
+		}
+		if (list.size() == 0)
+			return true;
+		return false;
+    }
+}
+
+和13题Roman_To_Integer有点类似，存入List中进行判断就行了。
+
+下面的想法更简单，是存入一个数组中即可。
+
+public boolean isValid(String s) {
+    if (s == null || s.length() == 0) {
+        return true;
+    }
+    char[] stack = new char[s.length()];
+    int top = 0;
+    for (int i = 0, j = s.length(); i < j; i++) {
+        char c = s.charAt(i);
+        if (c == '[' || c == '(' || c == '{') {
+            stack[top++] = c;
+        } else if (c == ']' || c == ')' || c == '}') {
+            if (top == 0) {//stack is empty
+                return false;
+            }
+            char pc = stack[--top];
+            if (pc == '[' && c == ']' || pc == '(' && c == ')' || pc == '{' && c == '}') {
+                continue;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    return top == 0;
+}
