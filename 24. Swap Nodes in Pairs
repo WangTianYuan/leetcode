@@ -1,0 +1,27 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode swapPairs(ListNode head) {
+        ListNode l=new ListNode(0);
+    l.next=head;
+    int i=0;
+    while(head!=null){
+    	if(head.next!=null){
+    		i=head.val;
+    		head.val=head.next.val;
+    		head=head.next;
+    		head.val=i;
+    	}
+    	head=head.next;
+    }
+    return l.next;
+    }
+}
+
+比较简单，看看就行，运行速度也是最快的，就交换一下值就好了。
