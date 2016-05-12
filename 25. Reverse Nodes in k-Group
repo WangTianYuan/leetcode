@@ -1,0 +1,31 @@
+自己写的说memory超过了，没有弄太懂，代码还在myEclipse里有（再做的时候再看看），然后现在给的是别人写的：
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null || head.next == null) return head;
+    int i = 1;
+    ListNode cur = head;
+    while (i < k) {
+        if (cur.next == null) break;
+        ListNode temp1 = cur.next;
+        ListNode temp2 = cur.next.next;
+        cur.next = temp2;
+        temp1.next = head;
+        head = temp1;
+        i++;
+    }
+    if (i < k) {
+        head = reverseKGroup(head, i);
+    }else {
+        cur.next = reverseKGroup(cur.next, k);
+    }
+    return head;
+    }
+}
