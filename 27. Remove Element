@@ -1,0 +1,27 @@
+public class Solution {
+    public int removeElement(int[] nums, int val) {
+        int length=nums.length;
+        int j=0;
+        for(int i=0;i<nums.length;i++){
+            if(nums[i]==val)
+                length--;
+            else
+                nums[j++]=nums[i];
+        }
+        return length;
+    }
+}
+
+除了获得length，还要使得nums数组也改变。
+
+public int removeElement(int[] nums, int val) {
+    int i=0;
+    for(int j=0; j<nums.length;j++) {
+        if (nums[j] != val) {
+            nums[i]=nums[j];
+            i++;
+        }
+    }
+    return i;
+}
+这种更简洁，但是没想到，这种最直观。
