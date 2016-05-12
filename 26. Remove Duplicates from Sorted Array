@@ -1,0 +1,13 @@
+这题很简单，要注意的就是要求，我感觉应该是不让我们新建别的东西来判断，只能一次遍历然后直接读取。
+public class Solution {
+    public int removeDuplicates(int[] nums) {
+        if(nums.length == 0) return 0;
+    int res = 1;
+    for(int i = 1; i<nums.length; i++){
+        if(nums[i] != nums[i-1]) nums[res++] = nums[i];
+    }
+    return res;
+    }
+}
+
+不要新建别的东西来保存。具体也不太懂，下次做的时候看一下
