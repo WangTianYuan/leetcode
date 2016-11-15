@@ -1,0 +1,23 @@
+public int longestValidParentheses(String s) {
+	    Stack<Integer> stack = new Stack<Integer>();
+	    int max=0;
+	    int left = -1;
+	    for(int j=0;j<s.length();j++){
+	        if(s.charAt(j)=='(') stack.push(j);            
+	        else {
+	            if (stack.isEmpty()) left=j;
+	            else{
+	                stack.pop();
+	                if(stack.isEmpty()) max=Math.max(max,j-left);
+	                else max=Math.max(max,j-stack.peek());
+	               }
+	            }
+	        }
+	    return max;
+	}
+  
+  自己写的时候没想到用stack，想着通过两层循环实现，结果超时了，然后就看到了这个方法。
+  思路很简单：出现'('的时候就push，然后')'的时候判断stack里面有没有东西，没有的话说明这个无效，把标记移到当前，如果有东西，说明是'('，取出来
+  看看stack是不是空的，不是的话就记录当前的长度（因为此时一定是可行的）。
+  
+  时间复杂度O(N)，但是运行时间不是最短。
