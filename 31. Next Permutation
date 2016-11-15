@@ -1,0 +1,80 @@
+public void nextPermutation(int[] nums) {
+		if (nums.length <= 1) {
+			return;
+		}
+		int i = nums.length - 1;
+		int j = nums.length - 1;
+		for (; i > 0; i--) {
+			if (nums[i] > nums[i - 1]) {
+				break;
+			}
+		}
+		if (i != 0) {
+			for (; j >= i; j--) {
+				if (nums[j] > nums[i - 1]) {
+					swap(nums, i - 1, j);
+					break;
+				}
+			}
+		}
+		reserve(nums, i, nums.length - 1);
+	}
+
+	public void swap(int[] nums, int i, int j) {
+		int temp = nums[i];
+		nums[i] = nums[j];
+		nums[j] = temp;
+	}
+
+	public void reserve(int[] nums, int i, int j) {
+		while (i < j) {
+			swap(nums, i, j);
+			i++;
+			j--;
+		}
+	}
+  
+  思路：找到倒序的排列，并对最后一个做标记（因为是找下一个更大的排列），然后将其与倒序中比它大的那个数字置换，之后将倒序的数字置换即可。思路很简单，需要21ms
+  
+  
+  16ms方法：
+  public void reverse(int[] nums, int start, int end) {
+    while(start<end) {
+        int tmp = nums[start];
+        nums[start] = nums[end];
+        nums[end]= tmp;
+        start++;
+        end--;
+    }
+}
+
+// idx should be less than nums.length-1;
+public boolean helper(int[] nums, int idx) {
+    if(idx<0)
+        return false;
+    int val = nums[idx];
+    boolean res = false;
+    int i;
+    // pick the least number which is greater than val from the rest values
+    // we know that the rest values must be in decending order!
+    for(i=idx+1; i<nums.length; i++) {
+        if(nums[i] <= val)
+            break;
+        res = true; // means the next permutation must exist!
+    }
+    if(res) {
+        nums[idx] = nums[i-1];
+        nums[i-1] = val;
+        reverse(nums,idx+1,nums.length-1);
+        return true;
+    } else
+        return helper(nums, idx-1);
+}
+
+public void nextPermutation(int[] nums) {
+    if(nums.length>1)
+        if(!helper(nums,nums.length-2))
+            reverse(nums,0,nums.length-1);
+}
+
+可以看看
