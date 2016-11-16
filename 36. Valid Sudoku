@@ -1,0 +1,52 @@
+public static boolean isValidSudoku(char[][] board) {
+		if (board == null) {
+			return false;
+		}
+		int length = board.length;
+		// List<Character> list=new ArrayList<Character>();
+		for (int i = 0; i < length; i++) {
+			HashSet<Character> rows = new HashSet<Character>();
+			HashSet<Character> cols = new HashSet<Character>();
+			HashSet<Character> cube = new HashSet<Character>();
+			for (int j = 0; j < length; j++) {
+				if (board[i][j] != '.' && !rows.add(board[i][j]))
+					return false;
+				if (board[j][i] != '.' && !cols.add(board[j][i]))
+					return false;
+				int rowindex = 3 * (i / 3);
+				int colindex = 3 * (i % 3);
+				if (board[rowindex + j / 3][colindex + j % 3] != '.'
+						&& !cube.add(board[rowindex + j / 3][colindex + j % 3]))
+					return false;
+			}
+		}
+		return true;
+	}
+  
+  开始做的时候没有想到正方形之内的重复问题，只写了行和列；
+  行和列不需要两次循环，在一次循环里通过i、j互换位置就能实现；
+  需要注意的是这里的cube，也就是正方形校验，只要保证一次循环完成以后每个正方形都校验过就好，这里的/与%思路需要借鉴一下，我自己没想到。
+  
+  一个更快一些的方法：
+  public boolean isValidSudoku(char[][] board) {
+    int [] vset = new int [9];
+    int [] hset = new int [9];
+    int [] bckt = new int [9];
+    int idx = 0;
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            if (board[i][j] != '.') {
+                idx = 1 << (board[i][j] - '0') ;
+                if ((hset[i] & idx) > 0 ||
+                    (vset[j] & idx) > 0 ||
+                    (bckt[(i / 3) * 3 + j / 3] & idx) > 0) return false;
+                hset[i] |= idx;
+                vset[j] |= idx;
+                bckt[(i / 3) * 3 + j / 3] |= idx;
+            }
+        }
+    }
+    return true;
+}
+
+思路应该差不多，没用这些对象，不太容易看懂，但是也能实现，再做的时候看一下。
