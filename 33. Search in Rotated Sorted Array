@@ -1,0 +1,29 @@
+public int search(int[] nums, int target) {
+         int start=0;
+        int end=nums.length-1;
+        while(start<=end){
+        	int middle=(start+end)/2;
+        	if(nums[middle]==target)
+        		return middle;
+        	if(nums[start]<=nums[middle]){
+        		if(target>=nums[start]&&target<nums[middle]){
+        			end=middle-1;
+        		}else{
+        			start=middle+1;
+        		}
+        	}
+        	if(nums[middle]<=nums[end]){
+        		if(target>nums[middle]&&target<=nums[end]){
+        			start=middle+1;
+        		}else{
+        			end=middle-1;
+        		}
+        	}
+        }
+        return -1;
+    }
+    
+    思路：其实跟二分法检索排序List没啥区别，数组可以看成2个排序List，至少有一半是排序的，所以先判断这一半是否排序，是的话就按二分法来
+        依次迭代下去，每一次的过程都是一样的，都是在排序中找结果，不满足说明在另一半里面。
+        。
+   需要注意的是:条件是<=、>=而不是<、>，因为要找到index，使用>、<时无法判断是否为这个值。这里是个陷阱，之前没考虑到
