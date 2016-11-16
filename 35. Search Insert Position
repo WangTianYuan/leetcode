@@ -1,0 +1,38 @@
+public int searchInsert(int[] nums, int target) {
+        int start=0;
+        int end=nums.length-1;
+        int middle=0;
+        while(start<end){
+        	middle=start+((end-start-1)>>1);
+        	if(target==nums[middle]){
+        		return middle;
+        	}else if(target>nums[middle]){
+        		start=middle+1;
+        	}else{
+        		end=middle;
+        	}
+        }
+        if(start==end){
+        	if(nums[start]>target){
+        		return start;
+        	}else{
+        		return start+1;
+        	}
+        }
+       return start;
+    }
+    
+    这是我写的，思路跟前面一题有点像，就是找出最近的小于target的值。但是对于start<end还是<=这些判断的很不准确，再次做的时候一定要搞清楚。
+    
+    public int searchInsert(int[] A, int target) {
+        int low = 0, high = A.length-1;
+        while(low<=high){
+            int mid = (low+high)/2;
+            if(A[mid] == target) return mid;
+            else if(A[mid] > target) high = mid-1;
+            else low = mid+1;
+        }
+        return low;
+    }
+    
+    这是别人写的，判断就很准确，而我需要下面的if来帮忙判断，再看的时候要弄懂。
