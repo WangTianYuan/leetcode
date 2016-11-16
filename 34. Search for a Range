@@ -1,0 +1,62 @@
+public int[] searchRange(int[] A, int target) {
+		int start = Solution.firstGreaterEqual(A, target);
+		if (start == A.length || A[start] != target) {
+			return new int[]{-1, -1};
+		}
+		return new int[]{start, Solution.firstGreaterEqual(A, target + 1) - 1};
+	}
+
+	//find the first number that is greater than or equal to target.
+	//could return A.length if target is greater than A[A.length-1].
+	//actually this is the same as lower_bound in C++ STL.
+	private static int firstGreaterEqual(int[] A, int target) {
+		int low = 0, high = A.length;
+		while (low < high) {
+			int mid = low + ((high - low) >> 1);
+			//low <= mid < high
+			if (A[mid] < target) {
+				low = mid + 1;
+			} else {
+				//should not be mid-1 when A[mid]==target.
+				//could be mid even if A[mid]>target because mid<high.
+				high = mid;
+			}
+		}
+		return low;
+	}
+  
+  这是一个思路很明确的解法：首先找到第一个值为target的索引位置，标记，然后再找比target大的第一个值的位置-1（因为取得最后的索引位置为A.length）.
+  这里需要注意的就是high = A.length而不是A.length-1.
+  
+   public int[] searchRange(int[] nums, int target) {
+         int[] ret= {-1, -1};
+         int i=0; int j=nums.length-1;
+         int m;
+
+         while (i<j) {
+             m=i+((j-i-1)>>1);
+             if(nums[m] < target) {
+                 i=m+1;
+             } else {
+                 j=m;
+             }
+         }
+         if(nums[j]==target) {
+             ret[0] = j;
+             
+             i=j; j=nums.length-1;
+             while (i<j) {
+                 m=i+((j-i+1)>>1);
+                 if(nums[m] > target) {
+                     j=m-1;
+                 } else {
+                     i=m;
+                 }
+             }
+             ret[1] = i;
+         }
+
+         return ret;
+    }
+    
+    这是一个新的思路：首先取第一个为target的索引位置，标记，然后从标记处开始再找最后一个值为target的索引位置。所以运行时间要比上面短一点。
