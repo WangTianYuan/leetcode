@@ -1,0 +1,54 @@
+public String countAndSay(int n) {
+		String str = "1";
+		String s = str;
+		for (int i = 1; i < n; i++) {
+			int count = 1;
+			s="";
+			char index = str.charAt(0);
+			for (int j = 1; j < str.length(); j++) {
+				if (str.charAt(j) == index) {
+					count++;
+				} else {
+					s =s+ count + index;
+					index = str.charAt(j);
+					count = 1;
+				}
+			}
+			s = s + count + index;
+			str=s;
+		}
+		
+		return s;
+	}
+  
+  思路很简单，遍历一遍，与前一个相同则count+1，否则s+count+index。然后重复n次。耗时37ms。
+  这题开始没做对是因为题目描述有问题：1.我以为是输入一个数然后计算第n个字符串；结果是计算1的第那个；
+                                  2.1的第1个字符串就是1，但我们都认为是11。
+
+使用StringBuffer之后，耗时明显减少，只需5ms。
+public String countAndSay(int n) {
+	    	StringBuilder curr=new StringBuilder("1");
+	    	StringBuilder prev;
+	    	int count;
+	    	char say;
+	        for (int i=1;i<n;i++){
+	        	prev=curr;
+	 	        curr=new StringBuilder();       
+	 	        count=1;
+	 	        say=prev.charAt(0);
+	 	        
+	 	        for (int j=1,len=prev.length();j<len;j++){
+	 	        	if (prev.charAt(j)!=say){
+	 	        		curr.append(count).append(say);
+	 	        		count=1;
+	 	        		say=prev.charAt(j);
+	 	        	}
+	 	        	else count++;
+	 	        }
+	 	        curr.append(count).append(say);
+	        }	       	        
+	        return curr.toString();
+        
+    }
+    
+    
