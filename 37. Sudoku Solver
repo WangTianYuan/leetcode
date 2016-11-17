@@ -1,0 +1,180 @@
+public void solveSudoku(char[][] board) {
+		if (board == null || board.length == 0)
+			return;
+		solve(board, 0, 0);
+	}
+
+	public boolean solve(char[][] board, int i, int j) {
+		if (i == 9 && j == 0)
+			return true;
+		if (board[i][j] != '.')
+			return solve(board, (j + 1) == 9 ? i + 1 : i, (j + 1) == 9 ? 0
+					: j + 1);
+
+		for (char num = '1'; num <= '9'; num++) {
+			if (isValid(board, i, j, num)) {
+				board[i][j] = num;
+				if (solve(board, (j + 1) == 9 ? i + 1 : i, (j + 1) == 9 ? 0
+						: j + 1))
+					return true;
+				board[i][j] = '.';
+			}
+		}
+		return false;
+	}
+
+	public boolean isValid(char[][] board, int i, int j, char num) {
+		for (int k = 0; k < 9; k++) {
+			if (board[k][j] != '.' && board[k][j] == num)
+				return false;
+			if (board[i][k] != '.' && board[i][k] == num)
+				return false;
+			int rowindex = 3 * (i / 3);
+			int colindex = 3 * (j / 3);
+			if (board[rowindex + k / 3][colindex + k % 3] != '.'
+					&& board[rowindex + k / 3][colindex + k % 3] == num)
+				return false;
+		}
+		return true;
+	}
+  
+  思路其实跟之前判断是否有效很相似，这里采用迭代（递归）的思想：首先从第一个开始计算：
+    不为'.'说明有值了，就不用管，继续计算下一个；
+    为'.'说明没赋值，从1-9开始赋值，每次都判断当前是否可行（用到之前的方法）。
+      如果可行就迭代计算下一个，直到所有都可行；
+      如果有不可行的，那就返回这里，将值变为'.'，重新赋值知道满足条件。
+      
+这里就是一个递归的思路，主要是别被弄混了，没考虑到某些情况就行。
+
+这里有一个3ms的解决方法：
+public void solveSudoku(char[][] board) {
+        //9rows+9columns+9blocks
+        int[] checkers = new int[27];
+        List<Integer> emptyList = new ArrayList<Integer>(81);
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] != '.') {
+                    fillNum(checkers, i, j, getCharValue(board[i][j]));
+                } else {
+                    //save empty row&column
+                    emptyList.add(i * 9 + j);
+                }
+            }
+        }
+
+        int count = emptyList.size();
+        if (count > 0) {
+            int[] empty = new int[count];
+            for (int i = 0; i < count; i++) {
+                empty[i] = emptyList.get(i);
+            }
+            solveSudoku(checkers, board, empty, count);
+        }
+    }
+
+    private boolean solveSudoku(int[] checkers, char[][] board, int[] empty, int count) {
+        while (count > 0) {
+            int k = 0;
+            for (; k < count; k++) {
+                int idx = empty[k];
+                int i = idx / 9;
+                int j = idx % 9;
+                int num = getUniqueNum(checkers, i, j);
+                //fill unique number
+                if (num > 0) {
+                    empty[k] = empty[count - 1];
+                    empty[count - 1] = -1;
+                    fillNum(checkers, i, j, num);
+                    board[i][j] = getChar(num);
+                    count--;
+                    break;
+                } else if (num == -1) {
+                    return false;
+                }
+            }
+            if (count != 0 && k == count) {
+                int idx = empty[count - 1];
+                int i = idx / 9;
+                int j = idx % 9;
+                List<Integer> vals = getAvailableNum(checkers, i, j);
+                for (Integer val : vals) {
+                    char[][] tmpBoard = new char[9][9];
+                    copyBoard(tmpBoard, board);
+                    int[] tmpCheckers = checkers.clone();
+                    int[] tmpEmpty = empty.clone();
+                    tmpBoard[i][j] = getChar(val);
+                    fillNum(tmpCheckers, i, j, val);
+                    if (solveSudoku(tmpCheckers, tmpBoard, tmpEmpty, count - 1)) {
+                        copyBoard(board, tmpBoard);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void copyBoard(char[][] dest, char[][] source) {
+        for (int i = 0; i < 9; i++) {
+            dest[i] = source[i].clone();
+        }
+    }
+
+    private List<Integer> getAvailableNum(int[] checkers, int i, int j) {
+        int[] idxs = getIndexs(i, j);
+        int val = checkers[idxs[0]] | checkers[idxs[1]] | checkers[idxs[2]];
+        List<Integer> result = new ArrayList<Integer>();
+        for (int k = 1; k <= 9; k++) {
+            if ((val & (1 << k)) >> k != 1) {
+                result.add(k);
+            }
+        }
+        return result;
+    }
+
+    private int getUniqueNum(int[] checkers, int i, int j) {
+        int[] idxs = getIndexs(i, j);
+        int val = checkers[idxs[0]] | checkers[idxs[1]] | checkers[idxs[2]];
+        if (val == 1022) {
+            //invalid board
+            return -1;
+        }
+        for (int k = 1; k <= 9; k++) {
+            if ((val & (1 << k)) >> k != 1) {
+                if ((val >> (k + 1)) == (1 << (9 - k)) - 1) {
+                    return k;
+                } else {
+                    break;
+                }
+            }
+        }
+        //multi-number
+        return 0;
+    }
+
+    private void fillNum(int[] checkers, int i, int j, int num) {
+        int[] idxs = getIndexs(i, j);
+        checkers[idxs[0]] |= (1 << num);
+        checkers[idxs[1]] |= (1 << num);
+        checkers[idxs[2]] |= (1 << num);
+    }
+
+    private int[] getIndexs(int i, int j) {
+        return new int[] { i, 9 + j, 18 + (i / 3 * 3 + j / 3) };
+    }
+
+    private int getCharValue(char i) {
+        if (i == '.') {
+            return 0;
+        } else {
+            return i - '1' + 1;
+        }
+    }
+
+    private char getChar(int i) {
+        return (char) ('1' - 1 + i);
+    }
+    
+    
+    这个方法没有弄明白思路，fillNum函数的功能不是很理解，下次做的时候看一下~
