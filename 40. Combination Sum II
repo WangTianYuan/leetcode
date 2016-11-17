@@ -1,0 +1,60 @@
+public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+		List<List<Integer>> res = new ArrayList<List<Integer>>();
+		Arrays.sort(candidates);
+		backtrack(res, candidates, new ArrayList<Integer>(), target, 0);
+		return res;
+	}
+
+	public void backtrack(List<List<Integer>> res, int[] candidates,
+			List<Integer> cur, int target, int start) {
+		if (target < 0) {
+			return;
+		} else if (target == 0) {
+			res.add(new ArrayList<Integer>(cur));
+		} else {
+			for (int i = start; i < candidates.length; i++) {
+				if (i > start && candidates[i] == candidates[i - 1])//这里的判断是指当前数字的所有方式已经判断完，下一个大小与我一样的数字就不能使用了，不然都是重复的。
+					continue;
+				cur.add(candidates[i]);
+				backtrack(res, candidates, cur, target - candidates[i], i + 1);//这里i+1的原因是因为不能重复使用，所以必须判断下一个。
+				cur.remove(cur.size() - 1);
+			}
+		}
+	}
+  
+这题的思路跟上一题一样，只不过条件改变的一点（数组中可能有重复的值但不能重复使用），所以在迭代的过程中需要有个判断。
+判断的过程在代码中有体现，不过要注意的是使用i-1,不要乱用i--这样的，有时候会出问题。
+
+    用时27ms。
+    
+    
+    下面是一个用时16ms的方法：
+public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+    Arrays.sort(candidates);
+    List<List<Integer>> ans=new ArrayList<List<Integer>>();    
+    ch(candidates,target,0,new ArrayList<Integer>(),ans);
+    return ans;
+}
+public void ch(int[] candidates,int remain,int rindex,List<Integer> tmp,List<List<Integer>> ans)
+{
+    if(remain==0)
+    {
+        List<Integer> a=new ArrayList<Integer>(tmp);
+        ans.add(a);
+        return;
+    }
+    int entered=0; // get rid of duplicate combinations
+    for(int i=rindex;i<candidates.length;i++)
+    {
+        if(entered!=candidates[i]) // get rid of duplicate combinations
+        {
+            if(remain-candidates[i]<0) break; //This line of code can reduce 7ms from execution time!
+            tmp.add(candidates[i]);
+            entered=candidates[i];
+            ch(candidates,remain-candidates[i],i+1,tmp,ans);
+            tmp.remove(tmp.size()-1); 
+        }   
+    }
+}
+
+思路看起来都是一样的，不过这里将不满足条件的判断提前到了上一个循环中（代码中注释break的那一行），感觉提升应该是在这里。
