@@ -1,0 +1,26 @@
+public int firstMissingPositive(int[] nums) {
+	        int i = 0;
+	        while(i < nums.length){
+	            if(nums[i] == i+1 || nums[i] <= 0 || nums[i] > nums.length) i++;
+	            else if(nums[nums[i]-1] != nums[i]) swap(nums, i, nums[i]-1);
+	            else i++;
+	        }
+	        i = 0;
+	        while(i < nums.length && nums[i] == i+1) i++;
+	        return i+1;
+	    
+    }
+	private void swap(int[] nums, int i, int j){
+		int temp = nums[i];
+		nums[i] = nums[j];
+		nums[j] = temp;
+	}
+
+一开始题目理解成了找出第一个不是正整数的索引，后来发现是找出第一个丢失的正整数，即第一个大小与索引不一致的位置。
+  
+所以可以遍历，中间判断条件：
+  满足nums[i]!=i+1&&nums[i] > 0 && nums[i] <= nums.length，说明nums[i]一定不是丢失的正整数而且应该在nums[i]-1这个索引位置上；就将其置换。
+  ——注意这里的置换方式，nums[nums[i]-1]!=nums[i]表明nums[i]-1这个索引位置上的数字不对，所以将正确数字置换过去，否则没必要置换，继续下一次判断即可。
+这样遍历一遍以后，所有在0-nums.length之间的正整数都在对应的索引位置，然后再循环找出第一个索引位置与正整数不对应的值。这个索引位置+1即为丢失的正整数。
+
+运行时间14ms。
