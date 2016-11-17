@@ -1,0 +1,34 @@
+public List<List<Integer>> combinationSum(int[] candidates, int target) {
+		List<List<Integer>> res = new ArrayList<List<Integer>>();
+		Arrays.sort(candidates);
+		backtrack(res, candidates, new ArrayList<Integer>(), target, 0);
+		return res;
+	}
+
+	public void backtrack(List<List<Integer>> res, int[] candidates,
+			List<Integer> cur, int target, int start) {
+		if (target < 0) {
+			return;
+		} else if (target == 0) {
+			res.add(new ArrayList<Integer>(cur));
+		} else {
+			for (int i = start; i < candidates.length
+					&& target >= candidates[i]; i++) {
+				cur.add(candidates[i]);
+				backtrack(res, candidates, cur, target - candidates[i], i);
+				cur.remove(cur.size() - 1);
+			}
+		}
+	}
+  
+  这题的思路跟数独差不多，直接从第一个数字开始判断，
+    一直累加知道target<0或者=0;等于0表示满足条件，res添加，<0说明不满足，直接返回；
+    target>0的时候说明还能判断，如果全是i不满足，则迭代到i+1，进行运算，如果满足,res添加，不满足就返回。
+这样从前往后迭代保证了每次出来的结果都不会有重复，并且考虑到了所有的情况。运行时间16ms
+
+
+对于这种类型的问题就叫做backtrack，可以采用迭代的方法解决。
+
+参见：https://discuss.leetcode.com/topic/46161/a-general-approach-to-backtracking-questions-in-java-subsets-permutations-combination-sum-palindrome-partitioning
+
+  
