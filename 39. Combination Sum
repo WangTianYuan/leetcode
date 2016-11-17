@@ -12,10 +12,9 @@ public List<List<Integer>> combinationSum(int[] candidates, int target) {
 		} else if (target == 0) {
 			res.add(new ArrayList<Integer>(cur));
 		} else {
-			for (int i = start; i < candidates.length
-					&& target >= candidates[i]; i++) {
+			for (int i = start; i < candidates.length; i++) {
 				cur.add(candidates[i]);
-				backtrack(res, candidates, cur, target - candidates[i], i);
+				backtrack(res, candidates, cur, target - candidates[i], i);//注意这里的i不能加，因为可能用到重复的值，所以需要通过for循环添加
 				cur.remove(cur.size() - 1);
 			}
 		}
