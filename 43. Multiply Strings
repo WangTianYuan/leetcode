@@ -1,0 +1,104 @@
+public String multiply(String num1, String num2) {
+        char[] n1=num1.toCharArray();
+        char[]n2=num2.toCharArray();
+        
+        charToInt(n1);
+        charToInt(n2);
+        return multiply(n1, n2);
+        
+    }
+    //高低位对调
+	public void charToInt(char[]nums){
+		for(int i=0;i<nums.length/2;i++){
+			char temp=nums[i];
+			nums[i]=nums[nums.length-1-i];
+			nums[nums.length-1-i]=temp;
+		}
+	}
+	public String multiply(char[]n1,char[]n2){
+    // 两数乘积位数不会超过乘数位数和+ 3位
+		int[]c=new int[n1.length+n2.length+3];
+    // 开辟乘积数组    
+    // 乘积数组填充0
+		for(int i=0;i<c.length;i++){
+			c[i]=0;
+		}
+    // 对齐逐位相乘
+		for(int i=0;i<n1.length;i++){
+			for(int j=0;j<n2.length;j++){
+				c[i+j]+=(int)(n1[i]-'0')*(int)(n2[j]-'0');
+			}
+		}
+    // 进位处理
+		for(int i=0;i<c.length;i++){
+			int ca=c[i]/10;
+			c[i]=c[i]%10;
+			if(ca>0)
+			c[i+1]+=ca;
+		}
+		String s="";
+		int m=0;
+    // 找到最高位
+		for(m=c.length-1;m>=0;m--){
+			if(c[m]>0)
+				break;
+		}
+		if(m<0){
+			return "0";
+		}
+    // 由最高位开始打印乘积
+		for(int i=m;i>=0;i--){
+			s+=c[i];
+		}
+		return s;
+	}
+  
+思路：将字符串转换成字符数组倒序排列，然后建立乘积结果数组（长度在代码中展示），然后逐位相乘，乘完以后进行进位处理，然后判断最高位，开始构建结果字符串。
+  耗时33ms。
+
+下面的方法思路更加清晰：
+public String multiply(String num1, String num2) {
+    StringBuilder sb = new StringBuilder();
+    int m = num1.length(), n = num2.length(), carry = 0;
+    
+    if (num1.charAt(0) == '0' || num2.charAt(0) == '0') return "0";
+    
+    for (int k = 0; k < m+n-1; k++) {
+        for (int i = Math.max(0,k-n+1); i < Math.min(m,k+1); i++) {
+            int j = k-i;
+            carry += (num1.charAt(m-i-1)-'0')*(num2.charAt(n-j-1)-'0');
+        }
+        sb.append(carry%10);
+        carry = carry/10;
+    }
+    if (carry > 0) sb.append(carry);
+    return sb.reverse().toString();
+}
+
+这是耗时22ms的方法：
+public String multiply(String num1, String num2) {
+        int m=num1.length(), n=num2.length(), zero=0;
+        int[] a = new int[m], c = new int[m+n];
+        for(int i=0,k=m; i<m; i++) a[--k]=num1.charAt(i)-'0';  // reverse the first number
+        for(int i=n-1; i>=0; i--)
+            add(c,a,num2.charAt(i)-'0',zero++);    // multiply each digits of num2 to num1
+        carry(c);            // handle all carry operation together
+        int i=m+n;
+        while(i>0 && c[--i]==0);  // find the highest digit
+        i++;
+        StringBuilder ret = new StringBuilder(i);
+        while(i>0) ret.append((char)(c[--i]+'0'));
+        return ret.toString();
+    }
+    void carry(int[] a){
+        int i;
+        for(int k=0,d=0; k<a.length; k++){
+            i=a[k]+d;
+            a[k]=i%10;
+            d=i/10;
+        }
+    }
+    void add(int[] c, int[] a, int b, int zero){
+        for(int i=zero,j=0; j<a.length; j++,i++)
+            c[i]+=a[j]*b;
+    }
