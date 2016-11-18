@@ -1,0 +1,61 @@
+public int jump(int[] nums) {
+		int count=0;
+		int index=nums.length-1;
+        while(index>0){
+        	index=getLast(nums, index);
+        	count++;
+        }
+        return count;
+    }
+	public int getLast(int nums[],int index){
+		int i=0;
+		for(;i<index;i++){
+        	if(nums[i]-(index-i)>=0){
+        		break;
+        	}
+        }
+		return i;
+	}
+我的方法：
+思路：从后往前找，每个数都减去到终点的距离，>0表示一步直接能到终点，取最早的；
+  然后将最后的索引位置移到这个位置，继续减去到现在索引位置的距离，直到索引位置为0，即表示这条路径最短
+从思路上来看应该是能解决这个问题，但是提交的时候超时了，因为有些特例可以使这种思路运行时间最长。
+
+从前往后找的单循环方法：
+public int jump(int[] A) {
+    int sc = 0;
+    int e = 0;
+    int max = 0;
+    for(int i=0; i<A.length-1; i++) {
+        max = Math.max(max, i+A[i]);
+        if( i == e ) {
+        //表示上一步最远能到这里，这一段区间里面最大的值就是+1步以后能走的距离
+            sc++;
+            e = max;
+        } 
+    }
+    return sc;
+}
+思路：从前往后找，
+e: longest distance in current minimum step
+sc: minimum steps for reaching e
+From i to e, even max is changed in a loop, it is reachable in one step.
+循环下去，最后就是能走最远距离的最小步数sc。
+  
+  运行时间13ms。
+  
+  
+  
+10ms的方法：思路是一样的
+public int jump(int[] A) {
+    int count = 0, max = 0;
+    for (int i = 0, nextMax = 0; i <= max && i < A.length - 1; i++) {
+        nextMax = Math.max(nextMax, i + A[i]);
+        if (i == max) {
+            max = nextMax;
+            count++;
+        }
+    }
+    // if there is no way to get to the end, return -1
+    return max >= A.length - 1 ? count : -1;
+}
