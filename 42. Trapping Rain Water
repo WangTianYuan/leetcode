@@ -1,0 +1,46 @@
+public int trap(int[] height) {
+		int l = 0;
+		int r = height.length - 1;
+		int count = 0;
+		while (l < r && height[l] <= height[l + 1])
+			l++;
+		while (l < r && height[r] <= height[r - 1])
+			r--;
+		while (l < r) {
+			int tl = height[l];
+			int tr = height[r];
+			if (tl <= tr) {
+				while (l < r && tl > height[++l]) {
+					count += tl - height[l];
+				}
+			} else {
+				while (l < r && tr > height[--r]) {
+					count += tr - height[r];
+				}
+			}
+		}
+		return count;
+	}
+思路：先取最两端索引，然后往中间移动，最左端必须比下一个大才有可能有水，同理最右端也是；所以先将不满足条件的剔除
+  然后判断左右两端哪边大，因为是盛水，所以取小的；
+    以左边为例，一直与下一个判断，如果tl > height[++l]，说明下一个可以盛水（因为最右端比最左端大，所以不需担心右边装不了），count累加。
+    然后一直判断直到l>=r(遍历一遍)或者右端出现大于左端的情况。此时将最左端置为此时的较大的右端，然后循环判断。
+    
+这里有一种使用stack的方法，可以看一下：
+public int trap(int[] height) {
+        int len = height.length;
+        int water = 0;
+        Stack<Integer> stack = new Stack<>();
+        for(int i = 0; i < len; i++) {
+            if (stack.isEmpty() || height[stack.peek()] >= height[i]) {
+                stack.push(i);
+            } else {
+                int tmp = stack.pop();
+                if (!stack.isEmpty()) {
+                    water += (Math.min(height[stack.peek()],height[i])-height[tmp])*(i-stack.peek()-1);
+                }
+                i--;
+            }
+        }
+        return water;
+    }
