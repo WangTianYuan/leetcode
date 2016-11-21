@@ -1,0 +1,52 @@
+public List<List<String>> groupAnagrams(String[] strs) {
+		Map<String, List<String>> existm = new HashMap<String, List<String>>();
+		if(strs == null || strs.length==0)
+			return new ArrayList<List<String>>();
+		for (String s : strs) {
+			char c[]=s.toCharArray();
+			Arrays.sort(c);
+//			String tc=c.toString();//注意这里不能用toString，两次对""的取值没法合并到同一个map的Key中。
+			String tc=String.valueOf(c);
+			if (existm.containsKey(tc)) {
+				List<String> templ = existm.get(tc);
+				templ.add(s);
+				existm.put(tc, templ);
+			} else {
+				List<String> templ = new ArrayList<String>();
+				templ.add(s);
+				existm.put(tc, templ);
+			}
+		}
+		return new ArrayList<List<String>>(existm.values());
+	}
+思路：遍历strs，对每个字符串都求按字典排序的字符串，然后存进一个map中，之后每次都判断是否在map中
+  在的话就存到对应的List中，不在的话就重新创建一个List。
+  有一点需要注意的在代码中指出了。
+  
+  用时27ms。
+  
+另一种更快的方法：但是我觉得是因为那个数组。。没看懂
+public static List<List<String>> groupAnagrams(String[] strs) { 
+   int[] prime = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103};//最多10609个z
+    
+            List<List<String>> res = new ArrayList<>();
+            HashMap<Integer, Integer> map = new HashMap<>();
+            for (String s : strs) {
+                int key = 1;
+                for (char c : s.toCharArray()) {
+                    key *= prime[c - 'a'];
+                }
+                List<String> t;
+                if (map.containsKey(key)) {
+                    t = res.get(map.get(key));
+                } else {
+                    t = new ArrayList<>();
+                    res.add(t);
+                    map.put(key, res.size() - 1);
+                }
+                t.add(s);
+            }
+            return res;
+    }
+    
+    用时22ms。
