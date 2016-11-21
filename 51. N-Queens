@@ -1,0 +1,101 @@
+public List<List<String>> solveNQueens(int n) {
+		if (n == 0)
+			return new ArrayList<List<String>>();
+		char[][] temp = new char[n][n];
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j < n; j++)
+				temp[i][j] = '.';
+		List<List<String>> res = new ArrayList<List<String>>();
+		solver(temp, 0, res);
+		return res;
+	}
+
+	public void solver(char[][] temp, int col, List<List<String>> res) {
+		if (col == temp.length) {
+			res.add(charToString(temp));
+			return;
+		}
+		for (int i = 0; i < temp.length; i++) {
+			if (isValid(temp, i, col)) {
+				temp[i][col] = 'Q';
+				solver(temp, col + 1, res);
+				temp[i][col] = '.';
+			}
+		}
+	}
+
+	public boolean isValid(char[][] temp, int x, int y) {
+		for (int i = 0; i < temp.length; i++) {
+			for (int j = 0; j < y; j++) {
+				if (temp[i][j] == 'Q'
+						&& (x + j == y + i || x + y == i + j || x == i))
+					return false;
+			}
+		}
+		return true;
+	}
+
+	public List<String> charToString(char[][] temp) {
+		List<String> list = new ArrayList<String>();
+		for (int i = 0; i < temp.length; i++) {
+			String s = String.valueOf(temp[i]);
+			list.add(s);
+		}
+		return list;
+	}
+  
+思路：与46题还有数独很相似，首先确定规则，皇后可以横着、竖着、斜着走。所以同一行、同一列、对角线上均只能有一个皇后。
+  通过x + j == y + i || x + y == i + j || x == i（j<y再循环中）来判断是否满足条件。
+开始构建一个全是'.'的数组，然后填充Q来找出所有可行的方案。
+  首先判断添加当前temp[i][col]为'Q'是否可行：
+    可行的话就添加，然后判断下一列；
+    不行的话就判断temp[i+1][col]为'Q'；
+    一直到最后一列，说明所有列均有一个Q。
+这样循环迭代了就能找出所有满足条件的情况。
+
+运行时间10ms。
+
+
+下面的方法用时4ms：
+public List<List<String>> solveNQueens(int n) {
+        boolean[] 
+            //ocp0 = new boolean[n], //whether there's a queen ocupying nth row, I don't need it
+            ocp90 = new boolean[n], //whether there's a queen ocupying nth column
+            ocp45 = new boolean[2 * n - 1], // mark 45 degree occupation
+            ocp135 = new boolean[2 * n - 1]; // mark 135 degree occupation
+        List<List<String>> ans = new ArrayList<List<String>>();
+        char[][] map = new char[n][n];
+        for (char[] tmp : map) Arrays.fill(tmp, '.'); //init
+        
+        solve(0, n, map, ans, ocp45, ocp90, ocp135);
+        return ans;
+    }
+    
+    private void solve(int depth, int n, char[][] map, List<List<String>> ans, 
+    boolean[] ocp45, boolean[] ocp90, boolean[] ocp135) {
+        if (depth == n) {
+            addSolution(ans, map);
+            return;
+        }
+        
+        for (int j = 0; j < n; j++)
+            if (!ocp90[j] && !ocp45[depth + j] && !ocp135[j - depth + n - 1]) {
+                ocp90[j] = true;
+                ocp45[depth + j] = true;
+                ocp135[j - depth + n - 1] = true;
+                map[depth][j] = 'Q';
+                solve(depth + 1, n, map, ans, ocp45, ocp90, ocp135);
+                ocp90[j] = false;
+                ocp45[depth + j] = false;
+                ocp135[j - depth + n - 1] = false;
+                map[depth][j] = '.';
+            }
+    }
+    
+    private void addSolution(List<List<String>> ans, char[][] map) {
+        List<String> cur = new ArrayList<String>();
+        for (char[] i : map) cur.add(String.valueOf(i));
+        ans.add(cur);
+    }
+    
+思路就是构建三个数组来记录列、对角线。然后迭代循环。
