@@ -1,0 +1,27 @@
+public double myPow(double x, int n) {
+		double res = 1;
+		if (n == 0)
+			return 1;
+		long m = Math.abs((long) n);
+		while (m / 2 > 0) {
+			if (m % 2 > 0)
+				res *= x;
+			x = x * x;
+			m = m / 2;
+		}
+		res *= x;
+		if (n < 0) {
+			return 1 / res;
+		} else {
+			return res;
+		}
+	}
+  
+思路：最开始想着直接按照n次来乘，结果发现超时，那就对n进行判断，先去绝对值（注意这里可能出现溢出，所以用long类型），然后做/2运算
+  每次>0时，说明结果比当前x*x要大，然后判断%2，如果有余数，说明最后结果有当前x，然后继续将x=x*x，n=n/2，直到最后n<2，说明这就是最后的最大的x。
+  然后得出结果，判断n的正负号，输出结果。
+用时21ms。
+
+另一种思路就是使用迭代，其实跟我这里很相似（不过使用迭代的话更加清晰，就是要注意变量）
+https://discuss.leetcode.com/topic/21837/5-different-choices-when-talk-with-interviewers
+这里有很多解题的方法，可以参考一下。
