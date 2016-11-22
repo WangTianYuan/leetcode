@@ -1,0 +1,35 @@
+public List<Integer> spiralOrder(int[][] matrix) {
+		List<Integer> list = new ArrayList<Integer>();
+		if(matrix==null||matrix.length==0)
+			return list;
+		int xs = 0, xe = matrix.length - 1;
+		int ys = 0, ye = matrix[0].length - 1;
+		while (xs <= xe && ys <= ye) {
+			for (int j = ys; j <= ye; j++)
+				list.add(matrix[xs][j]);
+			xs++;
+			for (int i = xs; i <= xe; i++)
+				list.add(matrix[i][ye]);
+			ye--;
+			if (xs > xe)
+				break;
+			for (int j = ye; j >= ys; j--)
+				list.add(matrix[xe][j]);
+			xe--;
+			if (ys > ye)
+				break;
+			for (int i = xe; i >= xs; i--)
+				list.add(matrix[i][ys]);
+			ys++;
+		}
+		return list;
+	}
+  
+思路：螺旋矩阵就是先向右，再向下，再向左，再向上，每向一个方向到头以后，该行/列就不能再访问
+  通过4个变量来标记，xs为剩余的行开始标记；xe:行结束；ys：列开始；ye：列结束。
+  通过循环来遍历：xs<=xe&&ys<=ye保证矩阵没有遍历完。
+    首先向右，长度为ye-ys，都记录以后当前行遍历完了，xs++；
+    同理向下，向左和向上都是这样。
+    需要注意的是：可能在中间就出现了xs==xe||ys==ye此时表示只需要跑一次向右/向下。所以需要判断一下。
+    
+    用时2ms。
