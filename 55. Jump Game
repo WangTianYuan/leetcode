@@ -1,0 +1,37 @@
+public boolean canJump(int[] nums) {
+		if (nums.length == 0)
+			return false;
+		if (nums.length == 1)
+			return true;
+		int max = 0;
+		for (int j = 0; j <= max; j++) {
+			if (j + nums[j] >= nums.length - 1)
+				return true;
+			max = Math.max(max, j + nums[j]);
+		}
+		return false;
+	}
+思路：从前往后判断，当前位置能达到的最远距离是j+nums[j]，只要j+nums[j]>= nums.length - 1说明能到达终点，返回true
+    如果j+nums[j]< nums.length - 1，此时记录max与j+nums[j]的最大值，将循环的位置移动到最大处（因为肯定能到这里）
+    然后继续判断下一步，直到达到max处，说明不能前进了，返回false。
+ 用时9ms。
+ 
+下面是一种从后往前循环的方法：
+public boolean canJump(int[] nums) {
+       if(nums.length < 2) return true;
+       
+       for(int curr = nums.length-2; curr>=0;curr--){
+           if(nums[curr] == 0){
+               int neededJumps = 1;
+               while(neededJumps > nums[curr]){
+                   neededJumps++;
+                   curr--;
+                   if(curr < 0) return false;
+               }
+           }
+       }
+       return true;
+    }
+思路就是遇到零的时候就判断前面的能不能到这个点（只要都不为0，那么肯定能到下一个点，肯定就能到终点）。
+用时7ms。
+
