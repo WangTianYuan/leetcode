@@ -1,0 +1,26 @@
+public int lengthOfLastWord(String s) {
+        int n=s.length();
+        int count=0;
+        if(n==0)
+        	return 0;
+        while(n-1>=0&&s.charAt(n-1)==' ')
+        	n--;
+        for(int i=n-1;i>=0;i--){
+        	if(s.charAt(i)==' '){
+        		return count;
+        	}
+        	count++;
+        }
+        return count;
+    }
+思路：找最后一个词的长度，可以从后往前找，需要注意几个特例：
+        s的长度为0，直接返回0；
+        最后字符为' '并不影响计算词的长度，需要跳过，同时也需要考虑数组越界的问题，通过while循环判断
+        然后开始计数，当出现' '说明词完了，返回计数值。
+用时6ms。
+
+另一种使用java自带库的方法：
+public int lengthOfLastWord(String s) {
+    return s.trim().length()-s.trim().lastIndexOf(" ")-1;
+}
+用时5ms。
