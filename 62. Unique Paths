@@ -1,0 +1,42 @@
+public int uniquePaths(int m, int n) {
+		if (m == 0 || n == 0)
+			return 0;
+		if (m == 1 || n == 1)
+			return 1;
+		if(m==2||n==2){
+			if(m==2)
+				return n;
+			return m;
+		}
+		if(m==n)
+			return 2*uniquePaths(m-1, n);
+		return uniquePaths(m, n-1)+uniquePaths(m-1, n);
+	}
+注意：这个方法运行超时了，但是思路是对的，只不过想反了。
+思路：在m*n中找出不同路径相当于从m-1*n和m*n-1中找出路径然后相加。前面都是为了计算更快得出的特例的分析。
+思路是没错，但是复杂度太高了，所以不能用。
+
+
+下面是别人的DP方法，值得借鉴：
+public int uniquePaths(int m, int n) {
+        if (m == 0 || n == 0) {
+            return 0;
+        }
+        if (m == 1 || n == 1) {
+            return 1;
+        }
+        
+        int[] dp = new int[n];
+        for (int i = 0; i < n; i++) {
+            dp[i] = 1;
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[j] += dp[j - 1];
+            }
+        }
+        return dp[n - 1];
+    }
+注意这里的双层循环中的dp[j] += dp[j - 1];这个相当于dp[i][j]=dp[i-1][j]+dp[i][j-1];原因自己看一下就明白了，
+这个跟我的思路正好相反，但是可以通过一次遍历就能求出来。
+用时0ms。
