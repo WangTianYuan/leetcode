@@ -1,0 +1,37 @@
+public int[][] generateMatrix(int n) {
+		int[][] matrix = new int[n][n];
+		if (n == 0)
+			return matrix;
+		int xs = 0, xe = n - 1;
+		int ys = 0, ye = n - 1;
+		int count = 0;
+		while (xs <= xe && ys <= ye) {
+			for (int j = ys; j <= ye; j++) {
+				count++;
+				matrix[xs][j] = count;
+			}
+			xs++;
+			for (int i = xs; i <= xe; i++) {
+				count++;
+				matrix[i][ye] = count;
+			}
+			ye--;
+			if (xs > xe)
+				break;
+			for (int j = ye; j >= ys; j--) {
+				count++;
+				matrix[xe][j] = count;
+			}
+			xe--;
+			if (ys > ye)
+				break;
+			for (int i = xe; i >= xs; i--) {
+				count++;
+				matrix[i][ys] = count;
+			}
+			ys++;
+		}
+		return matrix;
+	}
+思路：与之前的螺旋矩阵类似，不过这里不需要添加到list中，而是对数组进行赋值，循环判断过程一致，每次count+1，然后赋值给对应的数组。
+用时2ms。
