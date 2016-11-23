@@ -1,0 +1,28 @@
+public int minPathSum(int[][] grid) {
+		int m = grid.length;
+		int n = grid[0].length;
+		if (m == 0 || n == 0) {
+			return 0;
+		}
+		
+		for (int i = 1; i < m; i++) {
+			grid[i][0] += grid[i-1][0];
+		}
+		for (int j = 1; j < n; j++) {
+			grid[0][j] += grid[0][j-1];
+		}
+		for (int i = 1; i < m; i++) {
+			for (int j = 1; j < n; j++) {
+				grid[i][j] += Math.min(grid[i - 1][j], grid[i][j - 1]);
+			}
+		}
+		return grid[m - 1][n - 1];
+	}
+思路：跟上一题很相似，只不过之前是求路径，现在求路径和。
+    先对第一行和第一列进行计算（因为它们只有一条路径能到达），grid[i][0] += grid[i-1][0];grid[0][j] += grid[0][j-1];
+    给这些特定位置赋值上从起始点到他们的距离。
+    然后对之后的行与列进行赋值，最短的路径表示为grid[i][j] += Math.min(grid[i - 1][j], grid[i][j - 1]);
+    即起始点到达当前点的最小距离。
+    这样遍历下去就能得到起始点到终点的最小距离。
+用时3ms。
+
