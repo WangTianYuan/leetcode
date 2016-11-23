@@ -1,0 +1,30 @@
+public ListNode rotateRight(ListNode head, int k) {
+		if (k == 0)
+			return head;
+		List<ListNode> ln = new ArrayList<ListNode>();
+		while (head != null) {
+			ln.add(head);
+			head = head.next;
+		}
+		if (ln.size() == 0)
+			return head;
+		if (ln.size() <= k)
+			k = k % ln.size();
+		if (ln.size() == 1 || k == 0)
+			return ln.get(0);
+		head = ln.get(ln.size() - k);
+		ln.get(ln.size() - 1 - k).next = null;
+		ln.get(ln.size() - 1).next = ln.get(0);
+		return head;
+	}
+思路：使用List来记录所有的ListNode，首先需要判断几个条件：
+      k==0，说明不会偏转，直接返回head；
+      ln.size() == 0，说明没有ListNode，直接返回head（null）；
+      ln.size() <= k，说明偏转了几个循环，取k = k % ln.size();表明偏转在单个循环内；
+      ln.size() == 1 || k == 0，说明ListNode只有一个，怎么一动都一样或者k==0，根本不偏转，返回ln.get(0)即可。
+      剩下的说明都会偏转，先取偏转的开始节点ln.get(ln.size() - k)，使前一个节点的下一个节点为null。
+      再另当前List<ListNode>中的最后一个节点的下一个节点为ln.get(0)即完成了偏转。
+用时18ms。
+
+没有找到用时更短的，找到的都是不用List来判断，而是取几个ListNode来标记。
+      
