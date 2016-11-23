@@ -1,0 +1,34 @@
+public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+		int m = obstacleGrid.length;
+		int n = obstacleGrid[0].length;
+		if (m == 0 || n == 0) {
+			return 0;
+		}
+
+		int[][] dp = new int[m][n];
+		for (int i = 0; i < m; i++) {
+			if (obstacleGrid[i][0] != 0)
+				break;
+			dp[i][0] = 1;
+		}
+		for (int j = 0; j < n; j++) {
+			if (obstacleGrid[0][j] != 0)
+				break;
+			dp[0][j] = 1;
+		}
+		for (int i = 1; i < m; i++) {
+			for (int j = 1; j < n; j++) {
+				if (obstacleGrid[i][j] == 1)
+					dp[i][j] = 0;
+				else
+					dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+			}
+		}
+		return dp[m - 1][n - 1];
+	}
+跟上一题思路一样：只不过变化的是多了一个障碍物，这个障碍物我们首先在第一行和第一列判断一下，因为如果存在的话，（右或者下）方是不能到达的，之后的均为0
+  然后在别的行和列中遍历，当发现障碍时，就不计算dp[i][j] = dp[i - 1][j] + dp[i][j - 1]，而是dp[i][j] = 0;这样可以保证之后的计算不会通过这个路径
+最后在返回dp[m - 1][n - 1]即可。
+
+用时1ms。
+
