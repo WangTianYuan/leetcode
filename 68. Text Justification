@@ -1,0 +1,46 @@
+public List<String> fullJustify(String[] words, int maxWidth) {
+		List<String> res = new ArrayList<String>();
+		int start = 0;
+		while (start < words.length) {
+			int count = words[start].length();
+			int end = start + 1;
+			while (end < words.length) {
+				if (words[end].length() + count + 1 > maxWidth)
+					break;
+				count += words[end].length() + 1;
+				end++;
+			}
+			StringBuilder builder = new StringBuilder();
+			int length = end - start - 1;
+			if (end == words.length || length == 0) {
+				for (int i = start; i < end; i++)
+					builder.append(words[i] + " ");
+				builder.deleteCharAt(builder.length() - 1);
+				for (int i = builder.length(); i < maxWidth; i++)
+					builder.append(" ");
+			} else {
+				int space = (maxWidth - count) / length;
+				System.out.println(space);
+				int respc = (maxWidth - count) % length;
+				for (int i = start; i < end; i++) {
+					builder.append(words[i]);
+					if (i < end - 1) {
+						for (int j = 0; j <= (space + ((i - start) < respc ? 1
+								: 0)); j++) {
+							builder.append(" ");
+						}
+					}
+				}
+			}
+			res.add(builder.toString());
+			start = end;
+		}
+		return res;
+	}
+思路：标记初始位置，然后往后遍历，记录words[end].length() + count + 1 > maxWidth时的end-1值，表明这一行只有end-1-start个词，并记录count值。
+    然后判断end == words.length || length == 0，满足说明这一行只有一个词或者为最后一行，这样的行有个特性：
+      空格都在最后，词之间只需要一个空格。
+    不满足，说明有多个词，需要满足特性：最后一个词的尾部之后没有空格，空格要均匀分布，不能均匀分布，多的就在左边。
+      通过space记录每个词之间的最小距离，然后respc记录多余的空格。然后每个词之间先添加space个空格，然后在前respc个词后面多添加一个" "。
+    运行一次之后添加到res中。然后遍历整个数组，得到结果。
+用时1ms。
