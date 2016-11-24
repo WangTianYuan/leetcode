@@ -1,0 +1,40 @@
+public boolean isNumber(String s) {
+		s = s.trim();
+		if (s.length() == 0)
+			return false;
+		boolean isNum = false;
+		boolean isE = false;
+		boolean isPoi = false;
+		boolean isNeg = false;
+
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) >= '0' && s.charAt(i) <= '9') {
+				isNum = true;
+				isNeg = true;
+			} else if (s.charAt(i) == '.') {
+				if (isPoi || isE)
+					return false;
+				isPoi = true;
+			} else if (s.charAt(i) == 'e') {
+				if (!isNum || isE)
+					return false;
+				isNeg = false;
+				isE = true;
+			} else if (s.charAt(i) == '+' || s.charAt(i) == '-') {
+				if (i != 0 && s.charAt(i - 1) != 'e') {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+		return isNum && isNeg;
+    }
+思路：有效数字的条件先判断好：第一个必须是数字或者'.'； 
+                           '.'和'e'只能出现一次；
+                           'e'前面必须为数字（这里1.e10这样也算数字）；
+                           'e'出现以后后面没有数字也不行且不能有'.'；
+                           '+'、'-'号只能出现在'e'后面一位；
+   基于以上条件进行判断，取四个变量，isNum表示当前位数字；isE表示当前为'e'，isPoi表示当前为'.'，isNeg表示当前为'+'/'-'。
+   然后遍历字符串s，出现数字将isNum置为true；后面总共有4次判断，遍历完以后返回isNum && isNeg。
+用时4ms。
