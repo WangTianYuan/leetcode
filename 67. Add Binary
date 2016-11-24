@@ -1,0 +1,55 @@
+public String addBinary(String a, String b) {
+		String res = "";
+		if (a.equals(""))
+			return b;
+		if (b.equals(""))
+			return a;
+		int m = a.length() - 1;
+		int n = b.length() - 1;
+		int ca = 0;
+		int min = Math.min(m, n);
+		while (min >= 0) {
+			res = ((a.charAt(m) - '0') + (b.charAt(n) - '0') + ca) % 2 + res;
+			ca = ((a.charAt(m) - '0') + (b.charAt(n) - '0') + ca) / 2;
+			min--;
+			m--;
+			n--;
+		}
+		while (m >= 0) {
+			res = ((a.charAt(m) - '0') + ca) % 2 + res;
+			ca = ((a.charAt(m) - '0') + ca) / 2;
+			m--;
+		}
+		while (n >= 0) {
+			res = ((b.charAt(n) - '0') + ca) % 2 + res;
+			ca = ((b.charAt(n) - '0') + ca) / 2;
+			n--;
+		}
+		if (ca == 1)
+			return ca + res;
+		else
+			return res;
+	}
+思路：两个二进制字符串相加，从后往前，标记2个数组较小的长度，然后((a.charAt(m) - '0') + (b.charAt(n) - '0') + ca) % 2表示当前位加完以后的值。
+      ((a.charAt(m) - '0') + (b.charAt(n) - '0') + ca) / 2表示当前位加完以后的进位。
+      直到较小的遍历完以后，开始遍历另外一个剩余的字符串。
+      加到最后判断进位是否为1，为1则ca + res;否则返回res。
+用时5ms。
+
+采用Stringbuffer以后降低了运行时间：
+public String addBinary(String a, String b) {
+        int c = 0;
+        StringBuilder sb = new StringBuilder();
+        for(int i = a.length() - 1, j = b.length() - 1; i >= 0 || j >= 0;){
+            if(i >= 0) c += a.charAt(i--) - '0';
+            if(j >= 0) c += b.charAt(j--) - '0';
+            sb.insert(0, (char)((c % 2) + '0'));
+            c /= 2;
+        }
+        if(c == 1) sb.insert(0, "1");
+        return sb.toString();
+    }
+用时3ms。
+
+
+还有一种是采用异或来进行运算。
