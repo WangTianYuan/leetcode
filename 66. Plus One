@@ -1,0 +1,50 @@
+public int[] plusOne(int[] digits) {
+        int[] res = new int[digits.length + 1];
+		int ca = 1;
+		if(digits.length==0)
+		    return null;
+		for (int i = digits.length - 1; i >= 0; i--) {
+			if (digits[i] + ca == 10) {
+				ca = 1;
+				digits[i] = 0;
+				res[i + 1] = 0;
+			} else {
+				digits[i] = digits[i] + ca;
+				res[i + 1] = digits[i] + ca;
+				ca = 0;
+			}
+		}
+		if (ca == 1) {
+			res[0] = 1;
+			return res;
+		}
+		return digits;
+    }
+思路：题目描述的意思是：整个数组表示一个数字（从0->n位数从高到低），然后进行加一操作。
+  首先判断数组长度为0则返回空。
+  不为0表明可以加，然后创建一个int[] res = new int[digits.length + 1];接收数组，遍历digits:
+    如果digits[i] + ca == 10，说明有进位，当前值为0，进位为1，继续便利判断
+    不为10的时候，当前位+1，然后后面的都不变。
+    最后循环出来判断进位是不是为1，为1说明之前的数组溢出了，res[0] = 1;返回
+用时0ms。
+
+但是写完感觉代码写的不是很好，所以修改了一下：
+public int[] plusOne(int[] digits) {
+		int[] res = new int[digits.length + 1];
+		int ca = 1;
+		int i = digits.length - 1;
+		if (digits.length == 0)
+			return null;
+		while (i >= 0 && digits[i] + ca == 10) {
+			ca = 1;
+			digits[i] = 0;
+			res[i + 1] = 0;
+			i--;
+		}
+		digits[i] = digits[i] + ca;
+		if (i == -1) {
+			res[0] = 1;
+			return res;
+		}
+		return digits;
+	}
