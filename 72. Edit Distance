@@ -1,0 +1,84 @@
+public int minDistance(String word1, String word2) {
+        if(word1.length()==0)
+        	return word2.length();
+        if(word2.length()==0)
+        	return word1.length();
+        int[][] temp=new int[word1.length()+1][word2.length()+1];
+        for(int i=0;i<word1.length()+1;i++)
+        	temp[i][0]=i;
+        for(int i=0;i<word2.length()+1;i++)
+        	temp[0][i]=i;
+        for(int i=1;i<word1.length()+1;i++)
+        	for(int j=1;j<word2.length()+1;j++){
+        		if(word1.charAt(i-1)==word2.charAt(j-1))
+        			temp[i][j]=Math.min(temp[i-1][j-1], Math.min(temp[i-1][j]+1, temp[i][j-1]+1));
+        		else
+        			temp[i][j]=Math.min(temp[i-1][j-1]+1, Math.min(temp[i-1][j]+1, temp[i][j-1]+1));
+        	}
+        return temp[word1.length()][word2.length()];
+    }
+运行时间：17ms。其实这个就是求Levenshtein距离。开始网上搜索一下算法或者现代信息检索PPT上169页。很清晰。
+
+
+public int minDistance(String word1, String word2) {
+        int m = word1.length();
+        int n = word2.length();
+        
+        int[][] cost = new int[m + 1][n + 1];
+        for(int i = 0; i <= m; i++)
+            cost[i][0] = i;
+        for(int i = 1; i <= n; i++)
+            cost[0][i] = i;
+        
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(word1.charAt(i) == word2.charAt(j))
+                    cost[i + 1][j + 1] = cost[i][j];
+                else {
+                    int a = cost[i][j];
+                    int b = cost[i][j + 1];
+                    int c = cost[i + 1][j];
+                    cost[i + 1][j + 1] = a < b ? (a < c ? a : c) : (b < c ? b : c);
+                    cost[i + 1][j + 1]++;
+                }
+            }
+        }
+        return cost[m][n];
+    }
+    
+思路和上面的其实一样，但是少了一些运算（就是没用min算法），运行时间13ms。
+
+
+if (word1.length() == 0) {
+            return word2.length();
+        }
+        if (word2.length() == 0) {
+            return word1.length();
+        }
+        int l1 = word1.length();
+        int l2 = word2.length();
+        int[] minDist = new int[l2 + 1];
+        for (int j = 0; j <= l2; j++) {
+            minDist[j] = j;
+        }
+        
+        char[] chs1 = word1.toCharArray();
+        char[] chs2 = word2.toCharArray();
+        int prev;//store minDist[i - 1][j -1]
+        for (int i = 1; i <= l1; i++) {
+            minDist[0] = i - 1;
+            prev = minDist[0];
+            for (int j = 1; j <= l2; j++) {
+                int temp = minDist[j];
+                if (chs1[i - 1] == chs2[j - 1]) {
+                    minDist[j] = prev;
+                } else {
+                    minDist[j] =  Math.min(minDist[j], Math.min(prev, minDist[j - 1])) + 1;
+                }
+                prev = temp;
+            }
+        }
+        return minDist[l2];
+ 
+ 运行时间：9ms。
+ 这种方法其实思路也是一样的，只不过没用二维数组，而是使用一维数组，然后循环中进行判断。
