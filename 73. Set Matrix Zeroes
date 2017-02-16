@@ -1,0 +1,66 @@
+public void setZeroes(int[][] matrix) {
+		int row=matrix.length;
+		int column=matrix[0].length;
+		boolean []rows=new boolean[row];
+		boolean []columns=new boolean[column];
+		for(int i=0;i<row;i++)
+			for(int j=0;j<column;j++){
+				if(matrix[i][j]==0){
+					rows[i]=true;
+					columns[j]=true;
+					for(int k=i-1;k>=0;k--){
+						matrix[k][j]=0;
+					}
+					for(int k=j-1;k>=0;k--){
+						matrix[i][k]=0;
+					}
+				}else if(rows[i]||columns[j]){
+					matrix[i][j]=0;
+				}
+			}
+    }
+
+运行时间：2ms。应该是o(mn)复杂度，思路是遍历数组，然后判断是否有为0的情况
+  不为0且这一行且这一列没有被置0，则下一个；
+  为0，说明这一行、这一列被置0，然后将这一行前面，以及这一列前面都置0，然后继续判断；
+  不为0但是这一行或这一列被置0，将当前值置为0.
+最后得到的结果就是想要的。
+
+
+
+public void setZeroes(int[][] matrix) {
+    boolean fr = false,fc = false;
+    for(int i = 0; i < matrix.length; i++) {
+        for(int j = 0; j < matrix[0].length; j++) {
+            if(matrix[i][j] == 0) {
+                if(i == 0) fr = true;
+                if(j == 0) fc = true;
+                matrix[0][j] = 0;
+                matrix[i][0] = 0;
+            }
+        }
+    }
+    for(int i = 1; i < matrix.length; i++) {
+        for(int j = 1; j < matrix[0].length; j++) {
+            if(matrix[i][0] == 0 || matrix[0][j] == 0) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+    if(fr) {
+        for(int j = 0; j < matrix[0].length; j++) {
+            matrix[0][j] = 0;
+        }
+    }
+    if(fc) {
+        for(int i = 0; i < matrix.length; i++) {
+            matrix[i][0] = 0;
+        }
+    }
+    
+}
+运行时间也是2ms。他的思路是不需要数组来判断本行\列置0，而是用2个boolean值来判断第一行与第一列的值是否需要置0
+首先遍历数组，当出现0时，判断是否为第一行或者第一列，是的话，将对应的boolean置为true，然后将第一行对应列置为0，第一列对应行置为0；
+然后重新从第二行第二列开始遍历数组，只要对应行第一列或对应列第一行的值为0，将i、j处置为0；
+最后判断第一行、第一列是否需要置0。
+少一些空间吧。
