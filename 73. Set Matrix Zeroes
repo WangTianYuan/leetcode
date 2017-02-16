@@ -1,5 +1,5 @@
 public void setZeroes(int[][] matrix) {
-		if(matrix==null)
+		if(matrix.length==0)
 			return;
 		int row=matrix.length;
 		int column=matrix[0].length;
@@ -26,7 +26,7 @@ public void setZeroes(int[][] matrix) {
   不为0且这一行且这一列没有被置0，则下一个；
   为0，说明这一行、这一列被置0，然后将这一行前面，以及这一列前面都置0，然后继续判断；
   不为0但是这一行或这一列被置0，将当前值置为0.
-最后得到的结果就是想要的。注意这里需要判断matrix是不是为null，因为这种情况下会出现越界问题。
+最后得到的结果就是想要的。注意这里需要判断matrix是不是为[]，因为这种情况下会出现越界问题。
 
 
 
