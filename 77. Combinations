@@ -1,0 +1,62 @@
+public List<List<Integer>> combine(int n, int k) {
+	    List<List<Integer>> list = new ArrayList<List<Integer>>();
+	    backtrack(list, new ArrayList<Integer>(), n, k, 0);
+	    return list;
+	}
+
+	private void backtrack(List<List<Integer>> list, List<Integer> tempList, int n, int k, int start){
+	    if(tempList.size() == k) list.add(new ArrayList<Integer>(tempList));
+	    else{ 
+	        for(int i = start; i < n; i++){
+	            tempList.add(i);
+	            backtrack(list, tempList, n, k, i+1); // not i + 1 because we can reuse same elements
+	            tempList.remove(tempList.size() - 1);
+	        }
+	    }
+	}
+
+
+运行时间：24ms。思路和第40题一样，可以回去看看。
+
+
+public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (k > n || k < 0) {
+            return result;
+        }
+        if (k == 0) {
+            result.add(new ArrayList<Integer>());
+            return result;
+        }
+        result = combine(n - 1, k - 1);
+        for (List<Integer> list : result) {
+            list.add(n);
+        }
+        result.addAll(combine(n - 1, k));
+        return result;
+    }
+
+这种方法用时13ms。可以看一下思路，就是迭代。没有太搞懂。
+
+
+public List<List<Integer>> combine(int n, int k) {
+    List<List<Integer>> results = new ArrayList<>();
+    dfs(1, n, k, new ArrayList<Integer>(), results);
+    return results;
+}
+
+private void dfs(int crt, int n, int level, List<Integer> comb, List<List<Integer>> results) {
+    if (level == 0) {
+        List<Integer> newComb = new ArrayList<>(comb);
+        results.add(newComb);
+        return;
+    }
+    int size = comb.size();
+    for (int i = crt, max = n - level + 1; i <= max; i++) { 
+    //end search when its not possible to have any combination
+        comb.add(i);
+        dfs(i + 1, n, level - 1, comb, results);
+        comb.remove(size);
+    }
+}
+这个方法跟第一个方法思路一样，但是运行时间为5ms。应该是循环判断要更好。
