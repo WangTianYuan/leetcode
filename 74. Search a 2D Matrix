@@ -1,0 +1,75 @@
+public boolean searchMatrix(int[][] matrix, int target) {
+		if(matrix.length==0)
+			return false;
+        int row=matrix.length;
+        int column=matrix[0].length;
+        if(column==0)
+			return false;
+        if(target<matrix[0][0]||target>matrix[row-1][column-1])
+        	return false;
+        int i=0;
+        for(;i<row;i++){
+        	if(matrix[i][0]==target)
+        		return true;
+        	else if(matrix[i][0]>target)
+        		break;
+        }
+        i--;
+        int start=0;
+        int end=column-1;
+        while(start<=end){
+        	int middle=(start+end)/2;
+        	if(matrix[i][middle]==target)
+        		return true;
+        	else if(matrix[i][middle]>target)
+        		end=middle-1;
+        	else
+        		start=middle+1;
+        }
+        return false;
+    }
+
+运行时间：1ms。
+思路：首先判断数组是否为空或者列为空；是的话直接返回false；
+  然后判断目标是否比第一个小或者比最后一个大，是的话也直接返回false；
+  然后对行进行遍历，判断每一行第一个跟target的大小，取大于target的前一行（没有说明是最后一行里）
+  最后在此行中使用2分发来判断；没有的话就返回false，有的话返回true。
+
+
+
+public boolean searchMatrix(int[][] matrix, int target) {
+		if(matrix.length==0)
+			return false;
+        int row=matrix.length;
+        int column=matrix[0].length;
+        if(column==0)
+			return false;
+        if(target<matrix[0][0]||target>matrix[row-1][column-1])
+        	return false;
+        int start=0;
+        int end=row-1;
+        int middle=0;
+        while(start<=end){
+        	middle=(start+end)/2;
+        	if(matrix[middle][0]==target)
+        		return true;
+        	else if(matrix[middle][0]>target)
+        		end=middle-1;
+        	else
+        		start=middle+1;
+        }
+        middle=(start+end)/2;
+        start=0;
+        end=column-1;
+        while(start<=end){
+        	int middle2=(start+end)/2;
+        	if(matrix[middle][middle2]==target)
+        		return true;
+        	else if(matrix[middle][middle2]>target)
+        		end=middle2-1;
+        	else
+        		start=middle2+1;
+        }
+        return false;
+    }
+这个思路比之前的要好一点，不仅在最后使用二分法，在对行遍历时也使用二分法，而且避免了直接对二维数组进行m*n-1成为排序List的可能溢出的操作。
