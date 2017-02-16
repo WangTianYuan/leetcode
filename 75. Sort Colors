@@ -1,0 +1,99 @@
+public void sortColors(int[] nums) {
+		int index = -1;
+		int temp = 0;
+		for (int i = 0; i < nums.length; i++) {
+			if (nums[i] != 0 && index == -1)
+				index = i;
+			if (nums[i] == 0 && index != -1) {
+				temp = nums[i];
+				nums[i] = nums[index];
+				nums[index] = temp;
+				index++;
+			}
+		}
+		int i = 0;
+		if (index == -1)
+			return;
+		i = index;
+		index = -1;
+		for (; i < nums.length; i++) {
+			if (nums[i] != 1 && index == -1)
+				index = i;
+			if (nums[i] == 1 && index != -1) {
+				temp = nums[i];
+				nums[i] = nums[index];
+				nums[index] = temp;
+				index++;
+			}
+		}
+	}
+
+运行时间0ms。思路就是遍历数组：
+  先找到第一个不为0的值，然后打上记号；
+  为0时，则判断前面是不是全为0（通过记号），不全为0，则与记号处对换，然后记号+1；为0则往后遍历。
+这样就将0都弄到记号处前面了。
+  然后判断是否全为0（通过记号），全为0则直接退出；不全为0，则将标记指向后面全不为0的位置。
+  然后继续遍历数组，这次判断的是1，思路和上面一样。遍历完以后相当于排好序了。
+  
+
+public void sortColors(int[] nums) {
+    // 1-pass
+    int p1 = 0, p2 = nums.length - 1, index = 0;
+    while (index <= p2) {
+        if (nums[index] == 0) {
+            nums[index] = nums[p1];
+            nums[p1] = 0;
+            p1++;
+        }
+        if (nums[index] == 2) {
+            nums[index] = nums[p2];
+            nums[p2] = 2;
+            p2--;
+            index--;
+        }
+        index++;
+    }
+}
+这是别人的一次通过思路，p1为前指针，p2为后指针，为0与P1位置对换，为2与P2位置对换，这样实现排序。耗时1ms。
+
+
+public void sortColors(int[] nums) {
+    // 2-pass
+    int count0 = 0, count1 = 0, count2 = 0;
+    for (int i = 0; i < nums.length; i++) {
+        if (nums[i] == 0) {count0++;}
+        if (nums[i] == 1) {count1++;}
+        if (nums[i] == 2) {count2++;}
+    }
+    for(int i = 0; i < nums.length; i++) {
+        if (i < count0) {nums[i] = 0;}
+        else if (i < count0 + count1) {nums[i] = 1;}
+        else {nums[i] = 2;}
+    }
+}
+两次通过思路，先计数，然后直接遍历重写值。
+
+
+public void sortColors(int[] nums) {
+		int index = -1;
+		int temp = 0;
+		int last=nums.length-1;
+		for (int i = 0; i <= last; i++) {
+			if (nums[i] != 0 && index == -1)
+				index = i;
+			if (nums[i] == 0 && index != -1) {
+				temp = nums[i];
+				nums[i] = nums[index];
+				nums[index] = temp;
+				index++;
+			}
+			if(nums[i]==2){
+				temp = nums[i];
+				nums[i] = nums[last];
+				nums[last] = temp;
+				last--;
+				i--;
+			}
+		}
+  }
+根据上面的一次通过思路改写自己的方法，就是在第一次遍历中判断为2的情况，与最后一个换位置，然后最后一个往前一步，同时换过来的也要接着判断。也是0ms。
