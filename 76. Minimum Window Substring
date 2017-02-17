@@ -72,26 +72,24 @@ public String minWindow(String S, String T) {
                 }
             }
             j++;
-        }
+        }//符合目标的字符数量少于t，则判断已找到的对应字符是否少于，如果少于则标记+1，不少于，说明多了，标记不变
         while(found==T.length()){
             if(j-i<length){
-                length=j-i; res=S.substring(i,j);
+                length=j-i; res=S.substring(i,j);//此处说明找到了T中的所有字符，然后判断length和当前长度，选更小的记录。
             }
             if(Tmap[S.charAt(i)]>0){
                 Smap[S.charAt(i)]--;
                 if(Smap[S.charAt(i)]<Tmap[S.charAt(i)]){
                     found--;
                 }
-            }
+            }//找到以后需要继续判断下一个，此处需要把开始的那个去掉，将found-1，然后首位往后推一位。
             i++;
         }
     }
     return res;
 }
 运行时间：11ms。
-
-
-
+思路：定义两个字符数组来记录S和T中每个字符出现的次数（达到固定空间的目的），首先Tmap记录T，然后按照注释中的内容循环遍历找出长度最小的情况。
 public String minWindow(String s, String t) {
         char[] s_array = s.toCharArray();
         char[] t_array = t.toCharArray();
@@ -131,4 +129,9 @@ public String minWindow(String s, String t) {
         return s.substring(min_start, min_start+min_length);
     }
     
-    运行时间：4ms。
+    运行时间：4ms。此处比上一个方法进步的地方时只用了一个字符数组记录T中的内容，而且没有使用found进行标记，而是通过一个count来代替Smap和found的功能
+ 循环遍历中的内容设计的更好。
+ 
+ 
+ 最开始的思路中有个错误，就是每次窗口向后的时候都要重新判断，其实不需要，只需要取消第一位，然后后续中找到第一位的即是新的结果。
+ 
