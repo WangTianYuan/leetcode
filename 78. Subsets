@@ -1,0 +1,42 @@
+public List<List<Integer>> subsets(int[] nums) {
+		int length=nums.length;
+	    List<List<Integer>> results = new ArrayList<List<Integer>>();
+	    for(int i=0;i<=length;i++){
+	    	dfs(0, length, i, new ArrayList<Integer>(), results,nums);
+	    }
+	    return results;
+	}
+
+	private void dfs(int crt, int n, int level, List<Integer> comb, List<List<Integer>> results,int[]nums) {
+	    if (level == 0) {
+	        List<Integer> newComb = new ArrayList<Integer>(comb);
+	        results.add(newComb);
+	        return;
+	    }
+	    int size = comb.size();
+	    for (int i = crt, max = n - level; i <= max; i++) { 
+	    //end search when its not possible to have any combination
+	        comb.add(nums[i]);
+	        dfs(i + 1, n, level - 1, comb, results,nums);
+	        comb.remove(size);
+	    }
+	}
+运行时间：3ms。思路和前一题combine基本一致，
+  combine运算的是C(n,k)，这里的所有子集可以看作是C(n,0)+...+C(n,n)。
+  有一点需要注意的是：这里的n不是从1-n，而是在数组中的nums[0]-nums[length-1]。
+
+public List<List<Integer>> subsets(int[] nums) {
+    List<List<Integer>> list = new ArrayList<>();
+    backtrack(list, new ArrayList<>(), nums, 0);
+    return list;
+}
+
+private void backtrack(List<List<Integer>> list , List<Integer> tempList, int [] nums, int start){
+    list.add(new ArrayList<>(tempList));
+    for(int i = start; i < nums.length; i++){
+        tempList.add(nums[i]);
+        backtrack(list, tempList, nums, i + 1);
+        tempList.remove(tempList.size() - 1);
+    }
+}
+运行时间：2ms。思路比上面的更简单，不需要循环迭代，在一次全部遍历的过程中其实就把所有可能的子集都找出来了，直接add即可。
