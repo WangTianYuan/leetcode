@@ -1,0 +1,46 @@
+public ListNode deleteDuplicates(ListNode head) {
+		if(head==null)
+			return head;
+		int temp = head.val;
+		ListNode tl = head;
+		ListNode tl2=new ListNode(temp);
+		tl2.next=tl;
+		while (head.next != null) {
+			if(temp==head.next.val){
+				tl.next=head.next.next;
+			}else{
+				tl=tl.next;
+				temp=tl.val;
+				head=tl;
+			}
+		}
+		return tl2.next;
+	}
+
+运行时间：1ms。思路就是遍历一次，出现相同的时候就跳过，不同的时候就继续判断，遍历完之后即可。
+
+public ListNode deleteDuplicates(ListNode head) {
+        ListNode list = head;
+         
+         while(list != null) {
+        	 if (list.next == null) {
+        		 break;
+        	 }
+        	 if (list.val == list.next.val) {
+        		 list.next = list.next.next;
+        	 } else {
+        		 list = list.next;
+        	 }
+         }
+         
+         return head;
+    }
+
+运行时间：1ms。思路跟上面的一样，不过更简单，不需要第三个指针，跳过和不同的判断比之前的更好。
+
+public ListNode deleteDuplicates(ListNode head) {
+        if(head == null || head.next == null)return head;
+        head.next = deleteDuplicates(head.next);
+        return head.val == head.next.val ? head.next : head;
+}
+运行时间：2ms。采用迭代的思路，代码量更少，但是耗时更多。思路自己想清楚，没太看懂。。。
