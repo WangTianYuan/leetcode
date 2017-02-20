@@ -1,0 +1,126 @@
+public boolean exist(char[][] board, String word) {
+        if(board.length==0||word.length()==0)
+        	return false;
+        int m=board.length;
+        if(board[0].length==0)
+        	return false;
+        int n=board[0].length;
+        boolean[][] tempb=new boolean[m][n];
+        int k=0;
+        for(int i=0;i<m;i++){
+        	for(int j=0;j<n;j++){
+        		if(board[i][j]==word.charAt(k)){
+        			tempb[i][j]=true;
+        			if(backtrack(board,tempb,word,i,j,k+1)){
+        				return true;
+        			}
+        			tempb[i][j]=false;
+        		}
+        	}
+        }
+        return false;
+    }
+	
+	private boolean backtrack(char[][] board,boolean[][] tempb,String word,int i,int j,int k){
+		if(k==word.length()){
+			return true;
+		}else{
+			if(i!=0&&board[i-1][j]==word.charAt(k)&&!tempb[i-1][j]){
+				tempb[i-1][j]=true;
+				if(backtrack(board,tempb,word,i-1,j,k+1)){
+					return true;
+				}
+				tempb[i-1][j]=false;
+			}
+			if(i!=board.length-1&&board[i+1][j]==word.charAt(k)&&!tempb[i+1][j]){
+				tempb[i+1][j]=true;
+				if(backtrack(board,tempb,word,i+1,j,k+1)){
+					return true;
+				}
+				tempb[i+1][j]=false;
+			}
+			if(j!=0&&board[i][j-1]==word.charAt(k)&&!tempb[i][j-1]){
+				tempb[i][j-1]=true;
+				if(backtrack(board,tempb,word,i,j-1,k+1)){
+					return true;
+				}
+				tempb[i][j-1]=false;
+			}
+			if(j!=board[0].length-1&&board[i][j+1]==word.charAt(k)&&!tempb[i][j+1]){
+				tempb[i][j+1]=true;
+				if(backtrack(board,tempb,word,i,j+1,k+1)){
+					return true;
+				}
+				tempb[i][j+1]=false;
+			}
+			System.out.println();
+			return false;
+		}
+	}
+
+运行时间：188ms。思路和前面的组合很相似，就是先取对应的boolean数组，判断第一个相同的字符，然后进行迭代处理
+  向上/下/左/右 是否满足？
+    满足继续判断；
+    不满足就返回false。
+  最后返回的boolean值就表示是否能够找到对应解。
+
+
+public boolean exist(char[][] board, String word) {
+    char[] w = word.toCharArray();
+    for (int y=0; y<board.length; y++) {
+    	for (int x=0; x<board[y].length; x++) {
+    		if (exist(board, y, x, w, 0)) return true;
+    	}
+    }
+    return false;
+}
+
+private boolean exist(char[][] board, int y, int x, char[] word, int i) {
+	if (i == word.length) return true;
+	if (y<0 || x<0 || y == board.length || x == board[y].length) return false;
+	if (board[y][x] != word[i]) return false;
+	board[y][x] ^= 256;
+	boolean exist = exist(board, y, x+1, word, i+1)
+		|| exist(board, y, x-1, word, i+1)
+		|| exist(board, y+1, x, word, i+1)
+		|| exist(board, y-1, x, word, i+1);
+	board[y][x] ^= 256;
+	return exist;
+}
+运行时间：50ms。其实思路和上面的差不多，但是改善了很多：
+  不需要boolean数组，只要在判断相同字符以后将其用^= 256改变（与256异或改成无效的值（因为char范围0-255，异或以后大于256），不能被判断相同即可），这样就不会一个位置走两次。
+  也不需要这么多if来进行判断，只要使用迭代即可，反正就是上下左右四个方向，让迭代里面自己来判断。
+
+public boolean exist(char[][] board, String word) {
+        if (word == null || word.length() == 0) {
+            return true;
+        }
+        char[] chs = word.toCharArray();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
+                if(dfs(board, chs, 0, i, j)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private boolean dfs(char[][] board, char[] words, int idx, int x, int y) {
+        if (idx == words.length) {
+            return true;
+        } 
+        if (x < 0 || x == board.length || y < 0 || y == board[0].length) {
+            return false;
+        }
+        if (board[x][y] != words[idx]) {
+            return false;
+        }
+        board[x][y] ^= 256;
+        boolean exist = dfs(board, words, idx + 1, x, y + 1) ||
+        dfs(board, words, idx + 1, x, y - 1) || dfs(board, words, idx + 1, x + 1, y) ||
+        dfs(board, words, idx + 1, x - 1, y) ;
+        board[x][y] ^= 256;
+        return exist;
+    }
+这个和上面的方法一样，但是运行时间是11ms。不知道为啥。。。
