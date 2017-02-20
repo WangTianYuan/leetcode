@@ -1,0 +1,75 @@
+public ListNode deleteDuplicates(ListNode head) {
+		ListNode tl = new ListNode(0);
+		ListNode tl2 = new ListNode(0);
+		tl.next = head;
+		tl2 = tl;
+		int temp;
+		while (head != null && head.next != null) {
+			if (head.next.val == head.val) {
+				tl.next = head.next.next;
+				temp = head.val;
+				head = tl.next;
+				while (head != null && head.val == temp) {
+					tl.next = head.next;
+					head = tl.next;
+				}
+			} else {
+				tl = tl.next;
+				temp = tl.next.val;
+				head = tl.next;
+			}
+		}
+		return tl2.next;
+	}
+  
+  运行时间：1ms。83题思路差不多，不过这里是把重复的值都删除，所以有一些改变。
+    遍历过程中：tl指向的是head的前一个，当head和head.next值相同时，跳到head.next.next上，并记录当前值
+                然后对后面每个都进行判断（内部循环）知道不是相同值才跳过，否则指针一直往后移一位（注意上面是移2位）
+               然后当前面的不同时，往后移一位即可。
+
+
+
+public ListNode deleteDuplicates(ListNode head) {
+        if(head==null) return null;
+        ListNode FakeHead=new ListNode(0);
+        FakeHead.next=head;
+        ListNode pre=FakeHead;
+        ListNode cur=head;
+        while(cur!=null){
+            while(cur.next!=null&&cur.val==cur.next.val){
+                cur=cur.next;
+            }
+            if(pre.next==cur){
+                pre=pre.next;
+            }
+            else{
+                pre.next=cur.next;
+            }
+            cur=cur.next;
+        }
+        return FakeHead.next;
+    }
+
+运行时间：1ms。思路和上面的其实一样，但是循环内的判断更好（不过也多了一个cur，不需要，直接用head就行了）
+  首先从当前开始判断与后一个是否一样，知道获得不一样的为止（令当前指针指向不一样的），然后顺序遍历。
+
+
+
+public ListNode deleteDuplicates(ListNode head) {
+        if(head == null || head.next == null){
+            return head;
+        }
+        int val = head.val;
+        ListNode next = head.next;
+        if(next.val != val){
+            head.next = deleteDuplicates(next);
+            return head;
+        }else{
+            while(next != null && next.val == val){
+                next = next.next;
+            }
+            return deleteDuplicates(next);
+        }
+    }
+运行时间：1ms。是一种迭代的思路，看懂就行，一般不会这样写。
+  
