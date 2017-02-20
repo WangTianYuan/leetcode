@@ -1,0 +1,30 @@
+public int removeDuplicates(int[] nums) {
+		if (nums.length < 3)
+			return nums.length;
+		int temp = nums[0];
+		int count = 1;
+		int index = 1;
+		for (int i = 1; i < nums.length; i++) {
+			if (nums[i] == temp && count < 2) {
+				nums[index] = nums[i];
+				count++;
+				index++;
+			} else if (nums[i] != temp) {
+				nums[index] = nums[i];
+				temp = nums[i];
+				count = 1;
+				index++;
+			}
+		}
+		return index;
+	}
+运行时间：2ms。思路：count记录当前相同的个数，index记录当前最多2个重复值的对应位置，所以遍历赋值即可。
+
+public int removeDuplicates(int[] nums) {
+        int index = 0;
+        for (int i=0;i<nums.length;i++)
+            if (index < 2 || nums[i] > nums[index-2])
+                nums[index++] = nums[i];
+        return index;
+}
+运行时间：1ms。思路：前2个先记录，然后当出现当前值与index-2对应值不相等时，对应index处附上当前值，index++。
