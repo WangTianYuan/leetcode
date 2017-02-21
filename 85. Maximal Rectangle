@@ -1,0 +1,176 @@
+public int maximalRectangle(char[][] matrix) {
+		if (matrix == null || matrix.length == 0)
+			return 0;
+		if (matrix[0].length == 0)
+			return 0;
+		int[] heights = new int[matrix[0].length];
+		int maxArea = 0;
+		for (int i = 0; i < matrix.length; i++) {
+			setHeights(matrix, heights, i);
+			maxArea = Math.max(maxArea, largestRectangleArea(heights));
+		}
+		return maxArea;
+	}
+
+	public void setHeights(char[][] matrix, int[] heights, int i) {
+		for (int j = 0; j < matrix[0].length; j++) {
+			if (matrix[i][j] == '1') {
+				heights[j] += 1;
+			} else {
+				heights[j] = 0;
+			}
+		}
+	}
+
+	public int largestRectangleArea(int[] heights) {
+		if (heights == null || heights.length == 0)
+			return 0;
+		int leftIndex[] = new int[heights.length];
+		int rightIndex[] = new int[heights.length];
+		leftIndex[0] = -1;
+		rightIndex[heights.length - 1] = heights.length;
+		int maxArea = 0;
+
+		for (int i = 1; i < heights.length; i++) {
+			int p = i - 1;
+			while (p >= 0 && heights[p] >= heights[i]) {
+				p = leftIndex[p];
+			}
+			leftIndex[i] = p;
+		}
+		for (int i = heights.length - 2; i >= 0; i--) {
+			int p = i + 1;
+			while (p < heights.length && heights[p] >= heights[i]) {
+				p = rightIndex[p];
+			}
+			rightIndex[i] = p;
+		}
+		for (int i = 0; i < heights.length; i++) {
+			maxArea = Math.max(maxArea, heights[i]
+					* (rightIndex[i] - leftIndex[i] - 1));
+		}
+		return maxArea;
+	}
+
+
+运行时间：9ms。思路就是借鉴84题的判断，每一行都跟84题一样计算，不过这里每行都要进行判断
+        当前matrix[i][j]=1时，heights[j]++,
+        当前matrix[i][j]=0时，heights[j]=0,
+        遍历完这一行以后得到了一个heights数组，进行84题的计算，得出这一行的最大矩形面积。
+      然后每一行都遍历完以后获得的最大面积就是要求的。
+
+
+
+public int maximalRectangle(char[][] matrix) {
+        int area = 0, new_area, r, l;
+        if(matrix.length > 0){
+            int[] line = new int[matrix[0].length];
+            boolean[] is_processed = new boolean[matrix[0].length];
+            for(int i = 0; i < matrix.length; i++){
+                for(int j = 0; j < matrix[i].length; j++){
+                    if (matrix[i][j] == '1') {
+                        line[j]++;
+                        is_processed[j] = false;
+                    } else {
+                        line[j] = 0;
+                        is_processed[j] = true;
+                    }
+                }
+                for(int j = 0; j < matrix[i].length; j++){
+                    if(is_processed[j]) continue;
+                    r = l = 1;
+                    while((j + r < line.length)&&(line[j + r] >= line[j])){
+                        if(line[j + r] == line[j]) is_processed[j + r] = true;
+                        r++;
+                    }
+                    while((j - l >= 0)&&(line[j - l] >= line[j])) l++;
+                    new_area = (r + l - 1)*line[j];
+                    if (new_area > area) area = new_area;
+                }
+            }
+        } return area;
+    }
+运行时间：11ms。看懂就行。
+
+
+
+
+public int maximalRectangle(char[][] matrix) {
+		/**
+		 * idea: using [LC84 Largest Rectangle in Histogram]. For each row
+		 * of the matrix, construct the histogram based on the current row
+		 * and the previous histogram (up to the previous row), then compute
+		 * the largest rectangle area using LC84.
+		 */
+		int m = matrix.length, n;
+		if (m == 0 || (n = matrix[0].length) == 0)
+			return 0;
+
+		int i, j, res = 0;
+		int[] heights = new int[n];
+		for (i = 0; i < m; i++) {
+			for (j = 0; j < n; j++) {
+				if (matrix[i][j] == '0')
+					heights[j] = 0;
+				else
+					heights[j] += 1;
+			}
+			res = Math.max(res, largestRectangleArea(heights));
+		}
+
+		return res;
+	}
+
+	public int largestRectangleArea(int[] heights) {
+		/**
+		 * idea: scan and store if a[i-1]<=a[i] (increasing), then as long
+		 * as a[i]<a[i-1], then we can compute the largest rectangle area
+		 * with base a[j], for j<=i-1, and a[j]>a[i], which is a[j]*(i-j).
+		 * And meanwhile, all these bars (a[j]'s) are already done, and thus
+		 * are throwable (using pop() with a stack).
+		 * 
+		 * We can use an array nLeftGeq[] of size n to simulate a stack.
+		 * nLeftGeq[i] = the number of elements to the left of [i] having
+		 * value greater than or equal to a[i] (including a[i] itself). It
+		 * is also the index difference between [i] and the next index on
+		 * the top of the stack.
+		 */
+		int n = heights.length;
+		if (n == 0)
+			return 0;
+
+		int[] nLeftGeq = new int[n]; // the number of elements to the left
+										// of [i] with value >= heights[i]
+		nLeftGeq[0] = 1;
+
+		// preIdx=the index of stack.peek(), res=max area so far
+		int preIdx = 0, res = 0;
+
+		for (int i = 1; i < n; i++) {
+			nLeftGeq[i] = 1;
+
+			// notice that preIdx = i - 1 = peek()
+			while (preIdx >= 0 && heights[i] < heights[preIdx]) {
+				res = Math.max(res, heights[preIdx] * (nLeftGeq[preIdx] + i - preIdx - 1));
+				nLeftGeq[i] += nLeftGeq[preIdx]; // pop()
+
+				preIdx = preIdx - nLeftGeq[preIdx]; // peek() current top
+			}
+
+			if (preIdx >= 0 && heights[i] == heights[preIdx])
+				nLeftGeq[i] += nLeftGeq[preIdx]; // pop()
+			// otherwise nothing to do
+
+			preIdx = i;
+		}
+
+		// compute the rest largest rectangle areas with (indices of) bases
+		// on stack
+		while (preIdx >= 0 && 0 < heights[preIdx]) {
+			res = Math.max(res, heights[preIdx] * (nLeftGeq[preIdx] + n - preIdx - 1));
+			preIdx = preIdx - nLeftGeq[preIdx]; // peek() current top
+		}
+
+		return res;
+	}
+运行时间：6ms。也是用84题的思路，不过这里少了一个变换的函数而已（用函数更清晰，但是会更加耗时）。
