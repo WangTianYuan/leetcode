@@ -1,0 +1,109 @@
+public boolean isScramble(String s1, String s2) {
+		if (s1.equals(s2))
+			return true;
+
+		int[] letters = new int[26];
+		for (int i = 0; i < s1.length(); i++) {
+			letters[s1.charAt(i) - 'a']++;
+			letters[s2.charAt(i) - 'a']--;
+		}
+		for (int i = 0; i < 26; i++)
+			if (letters[i] != 0)
+				return false;
+
+		for (int i = 1; i < s1.length(); i++) {
+			if (isScramble(s1.substring(0, i), s2.substring(0, i))
+					&& isScramble(s1.substring(i), s2.substring(i)))
+				return true;
+			if (isScramble(s1.substring(0, i), s2.substring(s2.length() - i))
+					&& isScramble(s1.substring(i), s2.substring(0, s2.length()
+							- i)))
+				return true;
+		}
+		return false;
+	}
+
+运行时间：5ms。思路比较清晰，先考虑特例：s1与s2是否相等和s1、s2中的所有字符是否相等。
+    然后循环迭代来判断：s1、s2取0-i，i-length两段（是否互相相等）；
+                      s1取0-i，i-length两段、s2取(length-i)-length（后i个），0-(length-i)两段判断是否相等
+    最后如果都没有返回true，说明都不想等，就返回false。
+
+
+
+public boolean isScramble(String s1, String s2) {
+		if (s1.length() != s2.length()) return false;
+		int len = s1.length();
+		/**
+		 * Let F(i, j, k) = whether the substring S1[i..i + k - 1] is a scramble of S2[j..j + k - 1] or not
+		 * Since each of these substrings is a potential node in the tree, we need to check for all possible cuts.
+		 * Let q be the length of a cut (hence, q < k), then we are in the following situation:
+		 * 
+		 * S1 [   x1    |         x2         ]
+		 *    i         i + q                i + k - 1
+		 * 
+		 * here we have two possibilities:
+		 *      
+		 * S2 [   y1    |         y2         ]
+		 *    j         j + q                j + k - 1
+		 *    
+		 * or 
+		 * 
+		 * S2 [       y1        |     y2     ]
+		 *    j                 j + k - q    j + k - 1
+		 * 
+		 * which in terms of F means:
+		 * 
+		 * F(i, j, k) = for some 1 <= q < k we have:
+		 *  (F(i, j, q) AND F(i + q, j + q, k - q)) OR (F(i, j + k - q, q) AND F(i + q, j, k - q))
+		 *  
+		 * Base case is k = 1, where we simply need to check for S1[i] and S2[j] to be equal 
+		 * */
+		boolean [][][] F = new boolean[len][len][len + 1];
+		for (int k = 1; k <= len; ++k)
+			for (int i = 0; i + k <= len; ++i)
+				for (int j = 0; j + k <= len; ++j)
+					if (k == 1)
+						F[i][j][k] = s1.charAt(i) == s2.charAt(j);
+					else for (int q = 1; q < k && !F[i][j][k]; ++q) {
+						F[i][j][k] = (F[i][j][q] && F[i + q][j + q][k - q]) || (F[i][j + k - q][q] && F[i + q][j][k - q]);
+					}
+		return F[0][0][len];
+	}
+
+运行时间：25ms。是采用的DP算法进行判断的。注释中是解释，看懂即可。
+
+
+
+
+int[] p = new int[]{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997};
+    public boolean isScramble(String s1, String s2) {
+        int l1=s1.length(), l2=s2.length();
+        if(l1!=l2) return false;
+        if(l1<=1) return s1.equals(s2);
+        if(s1.equals(s2)) return true;
+        long a=1, b=1, c=1;
+        for(int i=0; i<l1; i++){
+            if(i>0 && a==b && isScramble(s1.substring(0,i),s2.substring(l2-i)) && isScramble(s1.substring(i),s2.substring(0,l2-i)))
+                return true;
+            if(i>0 && a==c && isScramble(s1.substring(0,i),s2.substring(0,i)) && isScramble(s1.substring(i),s2.substring(i)))
+                return true;
+            a*=p[s1.charAt(i)-'A'];
+            b*=p[s2.charAt(l2-1-i)-'A'];
+            c*=p[s2.charAt(i)-'A'];
+        }
+        return false;
+    }
+
+
+运行时间：2ms。
+a is a custom hash of s1.substring(0,i), b is for the last i elements of s2, c is for the first i elements of s2.
+
+Although they are only hash code, but the hash functions are bijective due to the prime numbers.
+
+思路和第一种方法很相似：
+    不过这里通过p数组（来实现散列函数功能——就是一一对应，质数相乘的结果只能是同样质数才能乘出来）将判断2个字符串内字符是否相等的计算减去了。
+
+    a==b表示:s1的前i个字符和s2中后i个字符  总的字符一致。
+    a==c表示:s1的前i个字符和s2中前i个字符  总的字符一致。
+    
+    然后再对对应的s1、s2分段后进行判断。这个就是一个很好的优化，以后做题尽量想着这些优化方法。
