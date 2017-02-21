@@ -1,0 +1,54 @@
+public int largestRectangleArea(int[] heights) {
+		if (heights == null || heights.length == 0)
+			return 0;
+		int leftIndex[] = new int[heights.length];
+		int rightIndex[] = new int[heights.length];
+		leftIndex[0] = -1;
+		rightIndex[heights.length - 1] = heights.length;
+		int maxArea = 0;
+
+		for (int i = 1; i < heights.length; i++) {
+			int p = i - 1;
+			while (p >= 0 && heights[p] >= heights[i]) {
+				p = leftIndex[p];
+			}
+			leftIndex[i] = p;
+		}
+		for (int i = heights.length - 2; i >= 0; i--) {
+			int p = i + 1;
+			while (p < heights.length && heights[p] >= heights[i]) {
+				p = rightIndex[p];
+			}
+			rightIndex[i] = p;
+		}
+		for (int i = 0; i < heights.length; i++) {
+			maxArea = Math.max(maxArea, heights[i]
+					* (rightIndex[i] - leftIndex[i] - 1));
+		}
+		return maxArea;
+	}
+
+运行时间：4ms。思路是来自discuss中的：
+  确定的条件：对条形图中的每一个条i，最大的矩形面积是heights[i]*width，
+            width表示左边最近的比heights[i]大的那个条的索引到右边最近的比heights[i]大的条的索引的距离。
+            width=r-l-1;h[r]>=h[i],h[l]>=h[i](通过循环得出）。
+            然后再对数组进行遍历，判断所有矩形面积中最大的那个。
+            详情：https://discuss.leetcode.com/topic/39151/5ms-o-n-java-solution-explained-beats-96
+
+public int largestRectangleArea(int[] height) {
+        height = Arrays.copyOf(height, height.length + 1);
+
+        int maxRect = 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        for(int i = 0; i < height.length; ++i) {
+            while (!stack.isEmpty() && height[i] < height[stack.peek()]) {
+                int rect = height[stack.pop()] * (stack.isEmpty() ? i : (i-stack.peek()-1));
+                maxRect = Math.max(maxRect, rect);
+            }
+            stack.push(i);
+        }
+
+        return maxRect;
+    }
+
+运行时间：33ms。是使用栈的方式来解决的，提供一种思路。
