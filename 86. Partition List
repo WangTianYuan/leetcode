@@ -1,0 +1,70 @@
+public ListNode partition(ListNode head, int x) {
+		ListNode temp = new ListNode(-1);
+		ListNode ln = head;
+		if (head == null)
+			return head;
+		if (ln.val >= x) {
+			temp.next = ln;
+			while (ln.next != null) {
+				if (ln.next.val < x) {
+					ListNode ml = ln.next;
+					ln.next = ml.next;
+					ml.next = temp.next;
+					head = ml;
+					temp = ml;
+					break;
+				} else {
+					ln = ln.next;
+				}
+			}
+		}
+		if (temp.next == null) {
+			while (ln.next != null) {
+				if (ln.next.val >= x) {
+					temp = ln;
+					break;
+				}
+				ln = ln.next;
+			}
+		}
+		while (ln.next != null) {
+			if (ln.next.val < x) {
+				ListNode ml = ln.next;
+				ln.next = ml.next;
+				ml.next = temp.next;
+				temp.next = ml;
+				temp = temp.next;
+			} else {
+				ln = ln.next;
+			}
+		}
+		return head;
+	}
+
+运行时间：1ms。看起来很复杂，其实也是一次遍历就完成了，主要是要判断第一个值跟x的大小；
+        head.val>=x的话，后面<x的第一个值是插在最开头的，需要找到，然后退出继续判断第三个循环即可。
+        head.val<x的话，后面<x的值是插入在中间，所以这时候需要找到第一个>=x的值，这就是第二个循环的意义。
+        第三个循环就是一直找到<x的值，然后插入到前面。比较复杂，不过是正确的。然后看看别人的思路。
+
+
+
+
+public ListNode partition(ListNode head, int x) {
+    ListNode dummy1 = new ListNode(0), dummy2 = new ListNode(0);  //dummy heads of the 1st and 2nd queues
+    ListNode curr1 = dummy1, curr2 = dummy2;      //current tails of the two queues;
+    while (head!=null){
+        if (head.val<x) {
+            curr1.next = head;
+            curr1 = head;
+        }else {
+            curr2.next = head;
+            curr2 = head;
+        }
+        head = head.next;
+    }
+    curr2.next = null;          //important! avoid cycle in linked list. otherwise u will get TLE.
+    curr1.next = dummy2.next;
+    return dummy1.next;
+}
+运行时间：1ms。思路：使用2个链表分别按序记录>=x和<x的值。然后将>=x的链表尾部去掉（curr2.next = null），将<x的尾部接上>=x的链表，就是想要的结果
+        非常清晰，而且代码也很简单。
