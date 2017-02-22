@@ -1,0 +1,43 @@
+public List<List<Integer>> subsetsWithDup(int[] nums) {
+		List<List<Integer>> list = new ArrayList<List<Integer>>();
+		Arrays.sort(nums);
+		backtrack(list, new ArrayList<Integer>(), nums, 0);
+		return list;
+	}
+
+	private void backtrack(List<List<Integer>> list, List<Integer> tempList,
+			int[] nums, int start) {
+		list.add(new ArrayList<Integer>(tempList));
+		for (int i = start; i < nums.length; i++) {
+			tempList.add(nums[i]);
+			backtrack(list, tempList, nums, i + 1);
+			tempList.remove(tempList.size() - 1);
+			while (i < nums.length - 1 && nums[i] == nums[i + 1])
+				i++;
+		}
+	}
+
+运行时间：3ms。和78题思路一致，只不过这里数组可能出现重复，里层的while循环就是去除重复的值，上面的add是将数组0->n个都遍历的子集
+      下面开始是会出现跳过的情况，这里增加一个判断，当现在的值和下一个值一样的时候就跳过（因为不跳过，remove之后获得的值和当前一样）
+就多了这一个判断。
+
+
+
+public List<List<Integer>> subsetsWithDup(int[] nums) {
+    Arrays.sort(nums);
+	List<List<Integer>> result = new ArrayList<List<Integer>>();
+	result.add(new ArrayList<Integer>());
+	int begin = 0;
+	for(int i = 0; i < nums.length; i++){
+		if(i == 0 || nums[i] != nums[i - 1]) begin = 0;
+		int size = result.size();
+		for(int j = begin; j < size; j++){
+			List<Integer> cur = new ArrayList<Integer>(result.get(j));
+			cur.add(nums[i]);
+			result.add(cur);
+		}
+		begin = size;
+	}
+	return result;
+}
+运行时间：3ms。上面的方法使用的是backtracking，这里使用的是DP的方法，思路其实都差不太多，看明白就行。
