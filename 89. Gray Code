@@ -1,0 +1,49 @@
+public List<Integer> grayCode(int n) {
+		List<Integer> res = new ArrayList<Integer>();
+		for (int i = 0; i < 1 << n; i++) {
+			res.add(i ^ (i >> 1));
+		}
+		return res;
+	}
+
+运行时间：1ms。自己找的规律不对，想了很久也没想出来，这里的思路很简单：
+    总共有2^n个数，然后每个位置的数都是i和i/2的异或（其实这里的异或表示只改了一位）。不知道怎么想到的，以后自己多加入一些这样的判断。
+
+
+
+//analyze the pattern
+//n=0  -> 0
+//n=1  -> 0, 1
+//n=2  -> (00,  01),  (10,  11)
+//n=3  -> (000, 001, 010, 011), (111, 110, 101, 100)
+
+//so the pattern is when n=n  -> add 0 in front of all the result of (n-1)'s binary value (This is just same as all the result of (n-1)
+//                               and add 1 in front of all the result of(n-1)'s binary value (This need to calculate.)
+
+
+public List<Integer> grayCode(int n) {
+    List<Integer> result = new ArrayList();
+    result.add(0);
+    
+    for(int i=1; i<=n; i++){
+        int front=1;
+        //Create the correct value for binary format (10...0) which the value has i digi
+        //so shift 1 to right (i-1) times
+        for(int j=1; j<i; j++){
+            front = front<<1;
+        }
+        
+        //add the new generated value to the result list
+        //the new generated value is the last result add front value
+        int size=result.size();
+        //we want to loop through the (n-1) result from end to start. This is just because want to make the test case match the Leetcode answer. You can use other way loop through the (n-1) result.
+        for(int k=size-1; k>=0; k--){
+            result.add(result.get(k)+front);
+        }
+    }
+    
+    return result;
+}
+运行时间：1ms。思路有点像之前我的思路，只不过我没想明白，注释里解释的很清楚了
+    就是每到2^1、2^2、...、2^n-1就进行一下判断，然后取对应的2^n-1的值，然后对着前面的list倒序加上2^n-1即可。
+    原理：a->b只需改变1位，那么b->a也只需改变1位。到2^i处表明前i个数都遍历了一遍，那么加上一个2^i再倒序遍历一遍    就相当于2^(i+1)都遍历了一遍。
