@@ -1,0 +1,94 @@
+public List<String> restoreIpAddresses(String s) {
+		List<String> res = new ArrayList<String>();
+		int len = s.length();
+		for (int i = 1; i < 4 && i < len - 2; i++)
+			for (int j = i + 1; j < 7 && j < len - 1; j++)
+				for (int k = j + 1; k < 10 && k < len; k++) {
+					String a = s.substring(0, i);
+					String b = s.substring(i, j);
+					String c = s.substring(j, k);
+					String d = s.substring(k, len);
+					if (isValid(a) && isValid(b) && isValid(c) && isValid(d))
+						res.add(a + "." + b + "." + c + "." + d);
+				}
+		return res;
+	}
+
+	public boolean isValid(String s) {
+		if (s.length() > 3 || s.length() == 0
+				|| (s.charAt(0) == '0' && s.length() > 1)
+				|| Integer.parseInt(s) > 255)
+			return false;
+		return true;
+	}
+
+
+运行时间：5ms。思路：将s分为4段，然后判断每一段是否符合标准，这样遍历一遍，将所有符合标准的都选出来了。
+      标准：长度不能>3，长度不能为0，第一个字符为0的话长度必须为1，字符对应的数字不能大于255。
+
+
+
+/*Description of variables
+result - list of valid ip addr strings
+digits -char array representation of s
+len - length of s
+currIpAddr - char array that contains the IP addr we are building using backtracking
+remSegs - no. of segments remaining to be parsed. there 4 segments to an ip addr
+start - start index in the digits array for the current ip addr segment
+pos - next index to be populated in the currIpAddr array
+
+*/
+
+private static final char DOT = '.';
+
+public List<String> restoreIpAddresses(String s) {
+    List<String> result = new ArrayList<String>();
+    
+    char[] digits = s.toCharArray();
+    int len = s.length();
+    char[] currIpAddr = new char[len+3];
+    int pos = 0;
+    generateIpAddresses(digits, 4, 0, len, currIpAddr, pos, result);
+    
+    return result;
+}
+
+private void generateIpAddresses(char[] digits, int remSegs, int start, int len, 
+                                 char[] currIpAddr, int pos, List<String> result) {
+        if(start == len && remSegs == 0) {
+            result.add(String.valueOf(currIpAddr));
+            return;
+        }   
+    
+   //1. Checks for length of s too small
+   //2. Maximum Length of the remaining segments. Since a sgemnt can be upto 3 digits
+   // Length can not exceed 3x the remaining segments.
+   //3. Minimum Length of s. Each segment has to be atleast 1 digit
+    if((start > len) || ((len - start) > (3 * remSegs)) || ((len - start) < remSegs))
+        return;
+    
+    if(remSegs < 4)
+        currIpAddr[pos++] = DOT;
+    
+    int num = 0;
+    
+    for(int i = 0; i < Math.min(len-start, 3);i++) {
+        num = (10*num) + (int)(digits[start+i] - '0');
+        
+        if(i > 0 && num < 10)// leading 0 cases i = 1, then the number should be > 10.
+            return;
+        
+        ////"010010"
+        //Valid: ["0.10.0.10","0.100.1.0"]
+        //Invalid: ["0.1.0.010","0.1.00.10","0.1.001.0","0.10.0.10","0.10.01.0","0.100.1.0",
+        //"01.0.0.10","01.0.01.0","01.00.1.0","010.0.1.0"]
+        
+        if(num <= 255) {
+            currIpAddr[pos+i] = digits[start+i];
+            generateIpAddresses(digits, remSegs-1, start+i+1, len, currIpAddr, pos+i+1, result);
+        }
+    }
+  }
+
+
+运行时间：1ms。使用的是backtracking算法，思路在注释里面已经很清晰了
