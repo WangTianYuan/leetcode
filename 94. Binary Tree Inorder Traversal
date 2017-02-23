@@ -1,0 +1,45 @@
+public class Binary_Tree_Inorder_Traversal_94 {
+	public List<Integer> inorderTraversal(TreeNode root) {
+		List<Integer> res = new ArrayList<Integer>();
+		if (root == null)
+			return res;
+		backtrack(root, res);
+		return res;
+	}
+
+	public void backtrack(TreeNode root, List<Integer> res) {
+		if (root.left == null)
+			res.add(root.val);
+		backtrack(root.left, res);
+		if (root.right != null)
+			backtrack(root.right, res);
+	}
+
+
+运行时间：1ms。思路：采用的是backtracking方法（即递归）
+          当前节点有左子节点时，对左子节点进行判断；
+          没有左子节点，添加当前值，然后对右子节点进行判断。
+
+
+
+
+public List<Integer> inorderTraversal(TreeNode root) {
+	List<Integer> res = new LinkedList<Integer>();
+	if (root == null) return res;
+	
+	Stack<TreeNode> stack = new Stack<TreeNode>();
+	TreeNode cur = root;
+	while (cur != null || !stack.isEmpty()) { 
+		while (cur != null) {// Travel to each node's left child, till reach the left leaf
+			stack.push(cur);
+			cur = cur.left;				
+		}		 
+		cur = stack.pop(); // Backtrack to higher level node A
+		res.add(cur.val);  // Add the node to the result list
+		cur = cur.right;   // Switch to A'right branch
+	}
+	return res;
+}
+
+运行时间：2ms。思路：采用stack来进行循环判断的方法。先找到所有的左子节点，存到stack中；
+          然后，添加stack中的值（同时获得右节点，对右节点也进行这样的操作——找到所有的左子节点）。
