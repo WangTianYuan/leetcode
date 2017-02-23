@@ -1,0 +1,92 @@
+public List<TreeNode> generateTrees(int n) {
+		if (n < 1)
+			return new LinkedList<TreeNode>();
+		return generateSubtrees(1, n);
+	}
+
+	private List<TreeNode> generateSubtrees(int s, int e) {
+		List<TreeNode> res = new LinkedList<TreeNode>();
+		if (s > e) {
+			res.add(null); // empty tree
+			return res;
+		}
+
+		for (int i = s; i <= e; ++i) {
+			List<TreeNode> leftSubtrees = generateSubtrees(s, i - 1);
+			List<TreeNode> rightSubtrees = generateSubtrees(i + 1, e);
+
+			for (TreeNode left : leftSubtrees) {
+				for (TreeNode right : rightSubtrees) {
+					TreeNode root = new TreeNode(i);
+					root.left = left;
+					root.right = right;
+					res.add(root);
+				}
+			}
+		}
+		return res;
+	}
+
+运行时间：5ms。
+    思路：采用的是divide-and-conquer方法，就是96题中的方法变种而来，（跟backtracking很相似）
+      首先判断s是否>e，大于说明到头了，添加null
+      然后循环生成左子树和右子树（从1->n）。
+      获得当前位置所有的左子树和右子树以后，循环遍历，先取根节点，然后设定好左节点和右节点，添加到结果中。
+    跟上一题的解法是同一个人想出来的。
+
+
+
+
+public List<TreeNode> generateTrees(int n) {
+        List<TreeNode> res = new ArrayList<>();
+        if(n==0)
+          return res;
+        res.add(null);
+        for(; n > 0; n--) {
+            List<TreeNode> next = new ArrayList<>();
+            for(TreeNode node: res) {
+                //the special case when Node(n) is root of new tree
+                TreeNode root = new TreeNode(n); 
+                root.right = node;
+                next.add(root);
+               //while loop inserts new value to every possible position into the left tree side
+                while(node != null) {
+                    TreeNode cRoot = new TreeNode(root.right.val);
+                    //clone left subtree
+                    cRoot.left = copyTree(root.right.left);
+                    //reusing - point new root.right to the original right subtree
+                    cRoot.right = root.right.right;
+                    //curr is the cutoff node whose right child will be replaced by the new n 
+                    TreeNode curr = getValNode(cRoot, node.val); 
+                    //place n as curr's right child, make curr's original right child as the left child of n.
+                    TreeNode tmp = curr.left;
+                    curr.left = new TreeNode(n);
+                    curr.left.right = tmp;
+
+                    next.add(cRoot);
+                    node = node.left;
+                }
+            }
+            res = next;
+        }
+        return res;
+    }
+    private TreeNode getValNode(TreeNode n, int val) { //find the cutoff node in the new tree
+        while(n != null) {
+            if(n.val == val) break;
+            n = n.left;
+        }
+        return n;
+    }
+
+    private TreeNode copyTree(TreeNode root) { //clone the right subtree
+        if(root == null) return null;
+        TreeNode cRoot = new TreeNode(root.val);
+        cRoot.left = copyTree(root.left);
+        cRoot.right = copyTree(root.right);
+        return cRoot;
+    }
+
+
+
+运行时间：4ms。用的是DP的方法，思路在注释中解释得很清楚，看懂即可。
