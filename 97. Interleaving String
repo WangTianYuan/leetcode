@@ -1,0 +1,67 @@
+public boolean isInterleave(String s1, String s2, String s3) {
+		char a[] = s1.toCharArray();
+		char b[] = s2.toCharArray();
+		char c[] = s3.toCharArray();
+		if (a.length + b.length != c.length)
+			return false;
+		return isValid(a, b, c, 0, 0, 0,
+				new boolean[a.length + 1][b.length + 1]);
+	}
+
+	public boolean isValid(char[] a, char[] b, char[] c, int i, int j, int k,
+			boolean valid[][]) {
+		if (valid[i][j])
+			return false;
+		if (c.length == k)
+			return true;
+		if (!(i < a.length && a[i] == c[k]
+				&& isValid(a, b, c, i + 1, j, k + 1, valid) || j < b.length
+				&& b[j] == c[k] && isValid(a, b, c, i, j + 1, k + 1, valid)))
+			valid[i][j] = true;
+
+		return !valid[i][j];
+	}
+
+运行时间：2ms。思路：将字符串转换为字符数组（否则要使用substring函数，而这个函数也是对char类型进行隔断，还浪费时间）
+          首先判断前两个的长度加起来等于第三个，否则说明不能组成第三个；
+          然后设置一个boolean二维数组来标记当前位置是否有效（有效的意思是：这个位置能不能往下继续进行，避免后面多次的重复操作）
+          进入循环迭代判断阶段：
+              首先判断当前位置是否有效，有效表示可以继续进行，无效直接返回false；
+              然后判断是否进行到了第三个字符串的最后一位，是的话返回true；
+              然后对第一个字符串判断是否进行到最后一个，没有则判断当前字符是否和第三个字符串的当前字符一致，一致则迭代到下一个
+                  或者第二个字符串进行相同判断，如果最后两个表示都不可行，当前位置标记为无效（说明无法继续往下进行）；
+              最后返回当前是否有效。
+
+
+
+
+public boolean isInterleave(String s1, String s2, String s3) {
+
+    if ((s1.length()+s2.length())!=s3.length()) return false;
+
+    boolean[][] matrix = new boolean[s2.length()+1][s1.length()+1];
+
+    matrix[0][0] = true;
+
+    for (int i = 1; i < matrix[0].length; i++){
+        matrix[0][i] = matrix[0][i-1]&&(s1.charAt(i-1)==s3.charAt(i-1));
+    }
+
+    for (int i = 1; i < matrix.length; i++){
+        matrix[i][0] = matrix[i-1][0]&&(s2.charAt(i-1)==s3.charAt(i-1));
+    }
+
+    for (int i = 1; i < matrix.length; i++){
+        for (int j = 1; j < matrix[0].length; j++){
+            matrix[i][j] = (matrix[i-1][j]&&(s2.charAt(i-1)==s3.charAt(i+j-1)))
+                    || (matrix[i][j-1]&&(s1.charAt(j-1)==s3.charAt(i+j-1)));
+        }
+    }
+
+    return matrix[s2.length()][s1.length()];
+
+}
+
+运行时间：4ms。采用的DP方法，其实和上面很相似，不过没有迭代而采用的循环方法
+      使用boolean二维数组来标记此处是否成功，然后将第一行与第一列都进行一下判断，随后对数组进行赋值（即判断当前位置能不能成功）
+      最后获得的最后一位即表示总得结果能不能成功。
