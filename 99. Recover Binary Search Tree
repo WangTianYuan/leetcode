@@ -1,0 +1,96 @@
+TreeNode firstElement = null;
+    TreeNode secondElement = null;
+    // The reason for this initialization is to avoid null pointer exception in the first comparison when prevElement has not been initialized
+    TreeNode prevElement = new TreeNode(Integer.MIN_VALUE);
+    
+    public void recoverTree(TreeNode root) {
+        
+        // In order traversal to find the two elements
+        traverse(root);
+        
+        // Swap the values of the two nodes
+        int temp = firstElement.val;
+        firstElement.val = secondElement.val;
+        secondElement.val = temp;
+    }
+    
+    private void traverse(TreeNode root) {
+        
+        if (root == null)
+            return;
+            
+        traverse(root.left);
+        
+        // Start of "do some business", 
+        // If first element has not been found, assign it to prevElement (refer to 6 in the example above)
+        if (firstElement == null && prevElement.val >= root.val) {
+            firstElement = prevElement;
+        }
+    
+        // If first element is found, assign the second element to the root (refer to 2 in the example above)
+        if (firstElement != null && prevElement.val >= root.val) {
+            secondElement = root;
+        }        
+        prevElement = root;
+
+        // End of "do some business"
+
+        traverse(root.right);
+}
+运行时间：3ms。
+  思路：就按照中序遍历的方法：使用两个全局变量（标记出不满足条件的两个节点）和一个局部变量（通过局部变量将两个节点的值变换一下）
+    就是通过中序遍历标记出两个需要交换位置的节点，然后将节点的值变换一下即可。
+
+
+
+
+public void recoverTree(TreeNode root) {  
+
+    TreeNode first = null;     // first node need to be swap
+    TreeNode second = null;    // second node need to be swap
+    TreeNode pre = new TreeNode(Integer.MIN_VALUE);  //previous node.
+
+    while(root!=null){
+      TreeNode node = root.left;
+
+      // If left is not null, we need to find the rightmost node of left subtree,
+      // Set its right child to current node
+      if(node!=null){ 
+     
+        //find the rightmost
+        while(node.right!=null && node.right != root){
+          node = node.right;
+        }
+
+        //There are two cases,
+        //null: first time we access current, set node.right to current and move to left child of current and continue;
+        //current: we accessed current before, thus we've finished traversing left subtree, set node.right back to null;
+        if(node.right == null){
+          node.right = root;
+          root = root.left;
+          continue;
+        }else{
+          node.right = null;
+        }
+      }
+
+      // compare current node with previous node
+      if(root.val < pre.val ){
+        // first time we enconter reversed order, we set previous node to first
+        if( first == null ){
+          first = pre;
+        }
+        //In case that two nodes are successive, we set second to current every time.
+        second = root;
+      }
+      pre = root;
+      root = root.right;      
+    }
+
+    //swap the value;
+    int temp = second.val;
+    second.val = first.val;
+    first.val = temp;
+  }
+
+运行时间：6ms。Morris Traversal的方法，思路在注释中已经很清楚了。看懂即可，上面的中序遍历的一定要会写
