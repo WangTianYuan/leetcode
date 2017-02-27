@@ -1,0 +1,39 @@
+public boolean isValidBST(TreeNode root) {
+		long min = Long.MIN_VALUE;
+		long max = Long.MAX_VALUE;
+		return isValid(root, min, max);
+	}
+
+	public boolean isValid(TreeNode root, long min, long max) {
+		if (root == null)
+			return true;
+		if (root.val >= max || root.val <= min)
+			return false;
+		return isValid(root.left, min, root.val)&& isValid(root.right, root.val, max);
+	}
+
+运行时间：1ms。思路：设置当前树的最小值与最大值；然后他的左子树里的所有值都必须小于当前树的值（min-root）；右子树里的所有值都必须大于当前值（root-max)；
+    然后循环迭代即可。
+    
+
+
+
+public boolean isValidBST(TreeNode root) {
+   if (root == null) return true;
+   Stack<TreeNode> stack = new Stack<>();
+   TreeNode pre = null;
+   while (root != null || !stack.isEmpty()) {
+      while (root != null) {
+         stack.push(root);
+         root = root.left;
+      }
+      root = stack.pop();
+      if(pre != null && root.val <= pre.val) return false;
+      pre = root;
+      root = root.right;
+   }
+   return true;
+}
+
+运行时间：6ms。思路：中序遍历二叉树，然后使用stack来存储根节点的值，然后将所有左子树的根节点值存入stack中，然后循环进行判断。
+        如果有不满足条件的，就返回false，否则返回true。
